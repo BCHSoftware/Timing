@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ReadTags": {
+      "commandName": "Project",
+      "commandLineArgs": "SpeedwayR-16-50-19"
+    }
+  }
+}

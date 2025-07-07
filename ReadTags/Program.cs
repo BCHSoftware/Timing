@@ -12,8 +12,6 @@ namespace OctaneSdkExamples
 {
     class Program
     {
-        // This is set to true for XPC Words Reporting test
-        static bool _testXPCWordsReporting = false;
         // Create an instance of the ImpinjReader class.
         static ImpinjReader reader = new ImpinjReader();
 

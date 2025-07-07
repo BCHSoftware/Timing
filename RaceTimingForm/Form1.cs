@@ -23,8 +23,6 @@ namespace RaceTimingForm
             FileConsole.Initialize("RaceLog.txt");
             // Initialize the time label display
             timeInputTextBox.Text = "00:00";
-
-            
         }
 
         void OnTagsReported(ImpinjReader sender, TagReport report)
@@ -41,9 +39,9 @@ namespace RaceTimingForm
                     // so this is the first time we've encountered it.
                     if (_firstSeenEpcs.Add(tag.Epc.ToString()))
                     {
-                        resultslistBox.Items.Add(timeInputTextBox.Text + tag.Epc);
+                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(timeInputTextBox.Text + tag.Epc)));
                     }
-                    FileConsole.WriteLine("{0}, {1}, {2}, {3}, {4}",
+                    FileConsole.WriteLine("{0}, {1}, {2}, {3}",
                                             tag.Epc,
                                             timeInputTextBox.Text,
                                             tag.FirstSeenTime.LocalDateTime,
@@ -132,7 +130,6 @@ namespace RaceTimingForm
                                             ts.Minutes,
                                             ts.Seconds,
                                             ts.Milliseconds);
-            resultslistBox.Items.Add(timeInputTextBox.Text + " " + "EPC");
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)

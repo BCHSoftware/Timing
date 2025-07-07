@@ -52,10 +52,10 @@
             // startButton
             // 
             startButton.Enabled = false;
-            startButton.Location = new Point(157, 180);
-            startButton.Margin = new Padding(3, 4, 3, 4);
+            startButton.Location = new Point(110, 108);
+            startButton.Margin = new Padding(2, 2, 2, 2);
             startButton.Name = "startButton";
-            startButton.Size = new Size(140, 91);
+            startButton.Size = new Size(98, 55);
             startButton.TabIndex = 1;
             startButton.Text = "Start";
             startButton.UseVisualStyleBackColor = true;
@@ -64,10 +64,10 @@
             // stopButton
             // 
             stopButton.Enabled = false;
-            stopButton.Location = new Point(303, 180);
-            stopButton.Margin = new Padding(3, 4, 3, 4);
+            stopButton.Location = new Point(212, 108);
+            stopButton.Margin = new Padding(2, 2, 2, 2);
             stopButton.Name = "stopButton";
-            stopButton.Size = new Size(140, 91);
+            stopButton.Size = new Size(98, 55);
             stopButton.TabIndex = 2;
             stopButton.Text = "Stop";
             stopButton.UseVisualStyleBackColor = true;
@@ -76,10 +76,10 @@
             // resetButton
             // 
             resetButton.Enabled = false;
-            resetButton.Location = new Point(450, 180);
-            resetButton.Margin = new Padding(3, 4, 3, 4);
+            resetButton.Location = new Point(315, 108);
+            resetButton.Margin = new Padding(2, 2, 2, 2);
             resetButton.Name = "resetButton";
-            resetButton.Size = new Size(140, 91);
+            resetButton.Size = new Size(98, 55);
             resetButton.TabIndex = 3;
             resetButton.Text = "Reset";
             resetButton.UseVisualStyleBackColor = true;
@@ -94,20 +94,22 @@
             // 
             errorLabel.Font = new Font("Microsoft Sans Serif", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
             errorLabel.ForeColor = Color.Red;
-            errorLabel.Location = new Point(12, 484);
+            errorLabel.Location = new Point(8, 290);
+            errorLabel.Margin = new Padding(2, 0, 2, 0);
             errorLabel.Name = "errorLabel";
-            errorLabel.Size = new Size(1016, 69);
+            errorLabel.Size = new Size(711, 41);
             errorLabel.TabIndex = 4;
             // 
             // resultslistBox
             // 
             resultslistBox.ContextMenuStrip = listBoxContextMenu;
             resultslistBox.FormattingEnabled = true;
-            resultslistBox.ItemHeight = 25;
-            resultslistBox.Location = new Point(612, 12);
+            resultslistBox.ItemHeight = 15;
+            resultslistBox.Location = new Point(428, 7);
+            resultslistBox.Margin = new Padding(2, 2, 2, 2);
             resultslistBox.Name = "resultslistBox";
             resultslistBox.SelectionMode = SelectionMode.MultiExtended;
-            resultslistBox.Size = new Size(412, 379);
+            resultslistBox.Size = new Size(290, 229);
             resultslistBox.TabIndex = 5;
             // 
             // listBoxContextMenu
@@ -115,36 +117,38 @@
             listBoxContextMenu.ImageScalingSize = new Size(24, 24);
             listBoxContextMenu.Items.AddRange(new ToolStripItem[] { removeTagToolStripMenuItem, clearAllToolStripMenuItem });
             listBoxContextMenu.Name = "listBoxContextMenu";
-            listBoxContextMenu.Size = new Size(181, 68);
+            listBoxContextMenu.Size = new Size(139, 48);
             // 
             // removeTagToolStripMenuItem
             // 
             removeTagToolStripMenuItem.Name = "removeTagToolStripMenuItem";
-            removeTagToolStripMenuItem.Size = new Size(180, 32);
+            removeTagToolStripMenuItem.Size = new Size(138, 22);
             removeTagToolStripMenuItem.Text = "Remove Tag";
             removeTagToolStripMenuItem.Click += removeTagToolStripMenuItem_Click;
             // 
             // clearAllToolStripMenuItem
             // 
             clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
-            clearAllToolStripMenuItem.Size = new Size(180, 32);
+            clearAllToolStripMenuItem.Size = new Size(138, 22);
             clearAllToolStripMenuItem.Text = "Clear All";
             clearAllToolStripMenuItem.Click += clearAllToolStripMenuItem_Click;
             // 
             // timeInputTextBox
             // 
             timeInputTextBox.Font = new Font("Consolas", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            timeInputTextBox.Location = new Point(174, 89);
+            timeInputTextBox.Location = new Point(122, 53);
+            timeInputTextBox.Margin = new Padding(2, 2, 2, 2);
             timeInputTextBox.Name = "timeInputTextBox";
-            timeInputTextBox.Size = new Size(370, 64);
+            timeInputTextBox.Size = new Size(260, 45);
             timeInputTextBox.TabIndex = 6;
             timeInputTextBox.Text = "MM:SS";
             // 
             // connectButton
             // 
-            connectButton.Location = new Point(30, 375);
+            connectButton.Location = new Point(21, 225);
+            connectButton.Margin = new Padding(2, 2, 2, 2);
             connectButton.Name = "connectButton";
-            connectButton.Size = new Size(112, 34);
+            connectButton.Size = new Size(78, 20);
             connectButton.TabIndex = 7;
             connectButton.Text = "Connect";
             connectButton.UseVisualStyleBackColor = true;
@@ -153,48 +157,52 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(164, 366);
+            label1.Location = new Point(115, 220);
+            label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(64, 25);
+            label1.Size = new Size(43, 15);
             label1.TabIndex = 8;
             label1.Text = "Power:";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(276, 366);
+            label2.Location = new Point(193, 220);
+            label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
-            label2.Size = new Size(95, 25);
+            label2.Size = new Size(63, 15);
             label2.TabIndex = 9;
             label2.Text = "Sensitivity:";
             // 
             // numericPower
             // 
             numericPower.Increment = new decimal(new int[] { 2, 0, 0, 0 });
-            numericPower.Location = new Point(173, 404);
+            numericPower.Location = new Point(121, 242);
+            numericPower.Margin = new Padding(2, 2, 2, 2);
             numericPower.Maximum = new decimal(new int[] { 40, 0, 0, 0 });
             numericPower.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
             numericPower.Name = "numericPower";
-            numericPower.Size = new Size(55, 31);
+            numericPower.Size = new Size(38, 23);
             numericPower.TabIndex = 10;
-            numericPower.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            numericPower.Value = new decimal(new int[] { 12, 0, 0, 0 });
             // 
             // numericSensitivity
             // 
             numericSensitivity.Increment = new decimal(new int[] { 2, 0, 0, 0 });
-            numericSensitivity.Location = new Point(287, 404);
+            numericSensitivity.Location = new Point(201, 242);
+            numericSensitivity.Margin = new Padding(2, 2, 2, 2);
             numericSensitivity.Maximum = new decimal(new int[] { 10, 0, 0, int.MinValue });
             numericSensitivity.Minimum = new decimal(new int[] { 90, 0, 0, int.MinValue });
             numericSensitivity.Name = "numericSensitivity";
-            numericSensitivity.Size = new Size(55, 31);
+            numericSensitivity.Size = new Size(38, 23);
             numericSensitivity.TabIndex = 11;
             numericSensitivity.Value = new decimal(new int[] { 80, 0, 0, int.MinValue });
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1040, 562);
+            ClientSize = new Size(728, 337);
             Controls.Add(numericSensitivity);
             Controls.Add(numericPower);
             Controls.Add(label2);
@@ -206,7 +214,7 @@
             Controls.Add(resetButton);
             Controls.Add(stopButton);
             Controls.Add(startButton);
-            Margin = new Padding(3, 4, 3, 4);
+            Margin = new Padding(2, 2, 2, 2);
             Name = "Form1";
             Text = "Race Timer";
             FormClosing += Form1_FormClosing;
@@ -215,7 +223,6 @@
             ((System.ComponentModel.ISupportInitialize)numericSensitivity).EndInit();
             ResumeLayout(false);
             PerformLayout();
-
         }
 
         #endregion

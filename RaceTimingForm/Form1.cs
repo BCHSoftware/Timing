@@ -9,6 +9,8 @@ namespace RaceTimingForm
         // Declare a Stopwatch object
         private Stopwatch stopwatch = new Stopwatch();
         static ImpinjReader reader = new ImpinjReader();
+        private readonly HashSet<string> _firstSeenEpcs = new HashSet<string>();
+        private readonly object _epcLock = new object();
 
         public Form1()
         {
@@ -91,18 +93,41 @@ namespace RaceTimingForm
 
         void OnTagsReported(ImpinjReader sender, TagReport report)
         {
-            // This event handler is called asynchronously 
-            // when tag reports are available.
-            // Default test for ReadTags 
-            // Loop through each tag in the report 
-            // and print the data.
             foreach (Tag tag in report)
             {
-                
-                FileConsole.WriteLine("Antenna : {0}, EPC : {1} First : {2} Last : {3}",
-                                tag.AntennaPortNumber, tag.Epc, tag.FirstSeenTime.LocalDateTime, tag.LastSeenTime.LocalDateTime);
-                if (tag.FirstSeenTime.LocalDateTime == tag.LastSeenTime.LocalDateTime)
-                    SystemSounds.Beep.Play();
+                // Use a lock to ensure thread safety when accessing the HashSet
+                // This is crucial because OnTagsReported is called asynchronously
+                // and multiple reports might arrive concurrently.
+                lock (_epcLock)
+                {
+                    // Try to add the EPC to our set.
+                    // If Add() returns true, it means the EPC was NOT already in the set,
+                    // so this is the first time we've encountered it.
+                    if (_firstSeenEpcs.Add(tag.Epc.ToString()))
+                    {
+                        // Log only if it's a new EPC
+                        FileConsole.WriteLine("FIRST SEEN Tag: Antenna : {0}, EPC : {1}, First : {2}, Last : {3}",
+                                              tag.AntennaPortNumber,
+                                              tag.Epc,
+                                              tag.FirstSeenTime.LocalDateTime,
+                                              tag.LastSeenTime.LocalDateTime);
+                    }
+                    else
+                    {
+                         FileConsole.WriteLine($"DEBUG: Existing tag {tag.Epc} re-read.");
+                    }
+                }
+            }
+        }
+
+        // You might also want a way to clear _firstSeenEpcs if you want to reset the "first seen" status,
+        // e.g., for a new batch of items or at the start of a new operation.
+        public void ClearFirstSeenTags()
+        {
+            lock (_epcLock)
+            {
+                _firstSeenEpcs.Clear();
+                FileConsole.WriteLine("Cleared all first-seen tag records.");
             }
         }
 

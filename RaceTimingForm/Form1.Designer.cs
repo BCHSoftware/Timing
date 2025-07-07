@@ -37,13 +37,21 @@
             resultslistBox = new ListBox();
             listBoxContextMenu = new ContextMenuStrip(components);
             removeTagToolStripMenuItem = new ToolStripMenuItem();
-            timeInputTextBox = new TextBox();
             clearAllToolStripMenuItem = new ToolStripMenuItem();
+            timeInputTextBox = new TextBox();
+            connectButton = new Button();
+            label1 = new Label();
+            label2 = new Label();
+            numericPower = new NumericUpDown();
+            numericSensitivity = new NumericUpDown();
             listBoxContextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericPower).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericSensitivity).BeginInit();
             SuspendLayout();
             // 
             // startButton
             // 
+            startButton.Enabled = false;
             startButton.Location = new Point(157, 180);
             startButton.Margin = new Padding(3, 4, 3, 4);
             startButton.Name = "startButton";
@@ -55,6 +63,7 @@
             // 
             // stopButton
             // 
+            stopButton.Enabled = false;
             stopButton.Location = new Point(303, 180);
             stopButton.Margin = new Padding(3, 4, 3, 4);
             stopButton.Name = "stopButton";
@@ -66,6 +75,7 @@
             // 
             // resetButton
             // 
+            resetButton.Enabled = false;
             resetButton.Location = new Point(450, 180);
             resetButton.Margin = new Padding(3, 4, 3, 4);
             resetButton.Name = "resetButton";
@@ -84,9 +94,9 @@
             // 
             errorLabel.Font = new Font("Microsoft Sans Serif", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
             errorLabel.ForeColor = Color.Red;
-            errorLabel.Location = new Point(48, 350);
+            errorLabel.Location = new Point(12, 484);
             errorLabel.Name = "errorLabel";
-            errorLabel.Size = new Size(807, 69);
+            errorLabel.Size = new Size(1016, 69);
             errorLabel.TabIndex = 4;
             // 
             // resultslistBox
@@ -97,7 +107,7 @@
             resultslistBox.Location = new Point(612, 12);
             resultslistBox.Name = "resultslistBox";
             resultslistBox.SelectionMode = SelectionMode.MultiExtended;
-            resultslistBox.Size = new Size(412, 504);
+            resultslistBox.Size = new Size(412, 379);
             resultslistBox.TabIndex = 5;
             // 
             // listBoxContextMenu
@@ -105,14 +115,21 @@
             listBoxContextMenu.ImageScalingSize = new Size(24, 24);
             listBoxContextMenu.Items.AddRange(new ToolStripItem[] { removeTagToolStripMenuItem, clearAllToolStripMenuItem });
             listBoxContextMenu.Name = "listBoxContextMenu";
-            listBoxContextMenu.Size = new Size(241, 101);
+            listBoxContextMenu.Size = new Size(181, 68);
             // 
             // removeTagToolStripMenuItem
             // 
             removeTagToolStripMenuItem.Name = "removeTagToolStripMenuItem";
-            removeTagToolStripMenuItem.Size = new Size(240, 32);
+            removeTagToolStripMenuItem.Size = new Size(180, 32);
             removeTagToolStripMenuItem.Text = "Remove Tag";
             removeTagToolStripMenuItem.Click += removeTagToolStripMenuItem_Click;
+            // 
+            // clearAllToolStripMenuItem
+            // 
+            clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
+            clearAllToolStripMenuItem.Size = new Size(180, 32);
+            clearAllToolStripMenuItem.Text = "Clear All";
+            clearAllToolStripMenuItem.Click += clearAllToolStripMenuItem_Click;
             // 
             // timeInputTextBox
             // 
@@ -123,18 +140,66 @@
             timeInputTextBox.TabIndex = 6;
             timeInputTextBox.Text = "MM:SS";
             // 
-            // clearAllToolStripMenuItem
+            // connectButton
             // 
-            clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
-            clearAllToolStripMenuItem.Size = new Size(240, 32);
-            clearAllToolStripMenuItem.Text = "Clear All";
-            clearAllToolStripMenuItem.Click += clearAllToolStripMenuItem_Click;
+            connectButton.Location = new Point(30, 375);
+            connectButton.Name = "connectButton";
+            connectButton.Size = new Size(112, 34);
+            connectButton.TabIndex = 7;
+            connectButton.Text = "Connect";
+            connectButton.UseVisualStyleBackColor = true;
+            connectButton.Click += connectButton_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(164, 366);
+            label1.Name = "label1";
+            label1.Size = new Size(64, 25);
+            label1.TabIndex = 8;
+            label1.Text = "Power:";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(276, 366);
+            label2.Name = "label2";
+            label2.Size = new Size(95, 25);
+            label2.TabIndex = 9;
+            label2.Text = "Sensitivity:";
+            // 
+            // numericPower
+            // 
+            numericPower.Increment = new decimal(new int[] { 2, 0, 0, 0 });
+            numericPower.Location = new Point(173, 404);
+            numericPower.Maximum = new decimal(new int[] { 40, 0, 0, 0 });
+            numericPower.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
+            numericPower.Name = "numericPower";
+            numericPower.Size = new Size(55, 31);
+            numericPower.TabIndex = 10;
+            numericPower.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            // 
+            // numericSensitivity
+            // 
+            numericSensitivity.Increment = new decimal(new int[] { 2, 0, 0, 0 });
+            numericSensitivity.Location = new Point(287, 404);
+            numericSensitivity.Maximum = new decimal(new int[] { 10, 0, 0, int.MinValue });
+            numericSensitivity.Minimum = new decimal(new int[] { 90, 0, 0, int.MinValue });
+            numericSensitivity.Name = "numericSensitivity";
+            numericSensitivity.Size = new Size(55, 31);
+            numericSensitivity.TabIndex = 11;
+            numericSensitivity.Value = new decimal(new int[] { 80, 0, 0, int.MinValue });
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1040, 562);
+            Controls.Add(numericSensitivity);
+            Controls.Add(numericPower);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(connectButton);
             Controls.Add(timeInputTextBox);
             Controls.Add(resultslistBox);
             Controls.Add(errorLabel);
@@ -146,6 +211,8 @@
             Text = "Race Timer";
             FormClosing += Form1_FormClosing;
             listBoxContextMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)numericPower).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericSensitivity).EndInit();
             ResumeLayout(false);
             PerformLayout();
 
@@ -162,5 +229,10 @@
         private ToolStripMenuItem removeTagToolStripMenuItem;
         private TextBox timeInputTextBox;
         private ToolStripMenuItem clearAllToolStripMenuItem;
+        private Button connectButton;
+        private Label label1;
+        private Label label2;
+        private NumericUpDown numericPower;
+        private NumericUpDown numericSensitivity;
     }
 }

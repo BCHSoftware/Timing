@@ -24,76 +24,7 @@ namespace RaceTimingForm
             // Initialize the time label display
             timeInputTextBox.Text = "00:00";
 
-            try
-            {
-                string hostname = "SpeedwayR-16-50-19";
-                reader.Connect(hostname);
-
-                // Get the default settings
-                // We'll use these as a starting point
-                // and then modify the settings we're 
-                // interested in.
-
-                Settings settings = reader.QueryDefaultSettings();
-
-                // Tell the reader to include the antenna number
-                // in all tag reports. Other fields can be added
-                // to the reports in the same way by setting the 
-                // appropriate Report.IncludeXXXXXXX property.
-                settings.Report.IncludeAntennaPortNumber = true;
-
-                // The reader can be set into various modes in which reader
-                // dynamics are optimized for specific regions and environments.
-                // The following mode, AutoSetDenseReaderDeepScan (1002), monitors RF noise
-                // and interference then automatically and continuously optimizes
-                // the reader’s configuration
-                settings.RfMode = 1002;
-                settings.SearchMode = SearchMode.DualTarget;
-                settings.Session = 2;
-
-                // Disable all antennas.
-                settings.Antennas.DisableAll();
-                // Enable antenna #1. Disable all others.
-                settings.Antennas.GetAntenna(1).IsEnabled = true;
-                // Enable antenna #2. Disable all others.
-                settings.Antennas.GetAntenna(2).IsEnabled = true;
-
-                // Set the Transmit Power and 
-                // You can also set them to specific values like this...
-                settings.Antennas.GetAntenna(1).TxPowerInDbm = 10;
-                settings.Antennas.GetAntenna(1).RxSensitivityInDbm = -80;
-                settings.Antennas.GetAntenna(2).TxPowerInDbm = 10;
-                settings.Antennas.GetAntenna(2).RxSensitivityInDbm = -80;
-                settings.Report.IncludeFirstSeenTime = true;
-                settings.Report.IncludeLastSeenTime = true;
-
-                // Apply the newly modified settings.
-                reader.ApplySettings(settings);
-
-                // Assign the TagsReported event handler.
-                // This specifies which method to call
-                // when tags reports are available.
-                reader.TagsReported += OnTagsReported;
-
-                // Start reading.
-                reader.Start();
-
-
-
-            }
-            catch (OctaneSdkException e)
-            {
-                // Handle Octane SDK errors.
-                FileConsole.WriteLine(e.Message);
-                errorLabel.Text = e.Message;
-            }
-            catch (Exception e)
-            {
-                // Handle other .NET errors.
-                FileConsole.WriteLine(e.Message);
-                errorLabel.Text = e.Message;
-
-            }
+            
         }
 
         void OnTagsReported(ImpinjReader sender, TagReport report)
@@ -305,6 +236,79 @@ namespace RaceTimingForm
                 resultslistBox.Items.Clear();
                 _firstSeenEpcs.Clear();
                 MessageBox.Show($"All items removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void connectButton_Click(object sender, EventArgs evt)
+        {
+            try
+            {
+                string hostname = "SpeedwayR-16-50-19";
+                reader.Connect(hostname);
+
+                // Get the default settings
+                // We'll use these as a starting point
+                // and then modify the settings we're 
+                // interested in.
+
+                Settings settings = reader.QueryDefaultSettings();
+
+                // Tell the reader to include the antenna number
+                // in all tag reports. Other fields can be added
+                // to the reports in the same way by setting the 
+                // appropriate Report.IncludeXXXXXXX property.
+                settings.Report.IncludeAntennaPortNumber = true;
+
+                // The reader can be set into various modes in which reader
+                // dynamics are optimized for specific regions and environments.
+                // The following mode, AutoSetDenseReaderDeepScan (1002), monitors RF noise
+                // and interference then automatically and continuously optimizes
+                // the reader’s configuration
+                settings.RfMode = 1002;
+                settings.SearchMode = SearchMode.DualTarget;
+                settings.Session = 2;
+
+                // Disable all antennas.
+                settings.Antennas.DisableAll();
+                // Enable antenna #1. Disable all others.
+                settings.Antennas.GetAntenna(1).IsEnabled = true;
+                // Enable antenna #2. Disable all others.
+                settings.Antennas.GetAntenna(2).IsEnabled = true;
+
+                // Set the Transmit Power and 
+                // You can also set them to specific values like this...
+                settings.Antennas.GetAntenna(1).TxPowerInDbm = (double)numericPower.Value;
+                settings.Antennas.GetAntenna(1).RxSensitivityInDbm = (double)numericSensitivity.Value;
+                settings.Antennas.GetAntenna(2).TxPowerInDbm = (double)numericPower.Value;
+                settings.Antennas.GetAntenna(2).RxSensitivityInDbm = (double)numericSensitivity.Value;
+                settings.Report.IncludeFirstSeenTime = true;
+                settings.Report.IncludeLastSeenTime = true;
+
+                // Apply the newly modified settings.
+                reader.ApplySettings(settings);
+
+                // Assign the TagsReported event handler.
+                // This specifies which method to call
+                // when tags reports are available.
+                reader.TagsReported += OnTagsReported;
+
+                // Start reading.
+                reader.Start();
+                startButton.Enabled = true;
+                connectButton.Enabled = false;
+            }
+            catch (OctaneSdkException e)
+            {
+                // Handle Octane SDK errors.
+                FileConsole.WriteLine(e.Message);
+                errorLabel.Text = e.Message;
+            }
+            catch (Exception e)
+            {
+                // Handle other .NET errors.
+                FileConsole.WriteLine(e.Message);
+                errorLabel.Text = e.Message;
+
             }
         }
     }

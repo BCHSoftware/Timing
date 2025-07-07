@@ -29,23 +29,18 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            timeLabel = new Label();
             startButton = new Button();
             stopButton = new Button();
             resetButton = new Button();
             updateTimer = new System.Windows.Forms.Timer(components);
             errorLabel = new Label();
+            resultslistBox = new ListBox();
+            listBoxContextMenu = new ContextMenuStrip(components);
+            removeTagToolStripMenuItem = new ToolStripMenuItem();
+            timeInputTextBox = new TextBox();
+            clearAllToolStripMenuItem = new ToolStripMenuItem();
+            listBoxContextMenu.SuspendLayout();
             SuspendLayout();
-            // 
-            // timeLabel
-            // 
-            timeLabel.Font = new Font("Consolas", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            timeLabel.Location = new Point(163, 74);
-            timeLabel.Name = "timeLabel";
-            timeLabel.Size = new Size(354, 88);
-            timeLabel.TabIndex = 0;
-            timeLabel.Text = "00:00:00:000";
-            timeLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // startButton
             // 
@@ -94,31 +89,78 @@
             errorLabel.Size = new Size(807, 69);
             errorLabel.TabIndex = 4;
             // 
+            // resultslistBox
+            // 
+            resultslistBox.ContextMenuStrip = listBoxContextMenu;
+            resultslistBox.FormattingEnabled = true;
+            resultslistBox.ItemHeight = 25;
+            resultslistBox.Location = new Point(612, 12);
+            resultslistBox.Name = "resultslistBox";
+            resultslistBox.SelectionMode = SelectionMode.MultiExtended;
+            resultslistBox.Size = new Size(412, 504);
+            resultslistBox.TabIndex = 5;
+            // 
+            // listBoxContextMenu
+            // 
+            listBoxContextMenu.ImageScalingSize = new Size(24, 24);
+            listBoxContextMenu.Items.AddRange(new ToolStripItem[] { removeTagToolStripMenuItem, clearAllToolStripMenuItem });
+            listBoxContextMenu.Name = "listBoxContextMenu";
+            listBoxContextMenu.Size = new Size(241, 101);
+            // 
+            // removeTagToolStripMenuItem
+            // 
+            removeTagToolStripMenuItem.Name = "removeTagToolStripMenuItem";
+            removeTagToolStripMenuItem.Size = new Size(240, 32);
+            removeTagToolStripMenuItem.Text = "Remove Tag";
+            removeTagToolStripMenuItem.Click += removeTagToolStripMenuItem_Click;
+            // 
+            // timeInputTextBox
+            // 
+            timeInputTextBox.Font = new Font("Consolas", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            timeInputTextBox.Location = new Point(174, 89);
+            timeInputTextBox.Name = "timeInputTextBox";
+            timeInputTextBox.Size = new Size(370, 64);
+            timeInputTextBox.TabIndex = 6;
+            timeInputTextBox.Text = "MM:SS";
+            // 
+            // clearAllToolStripMenuItem
+            // 
+            clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
+            clearAllToolStripMenuItem.Size = new Size(240, 32);
+            clearAllToolStripMenuItem.Text = "Clear All";
+            clearAllToolStripMenuItem.Click += clearAllToolStripMenuItem_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(889, 562);
+            ClientSize = new Size(1040, 562);
+            Controls.Add(timeInputTextBox);
+            Controls.Add(resultslistBox);
             Controls.Add(errorLabel);
             Controls.Add(resetButton);
             Controls.Add(stopButton);
             Controls.Add(startButton);
-            Controls.Add(timeLabel);
             Margin = new Padding(3, 4, 3, 4);
             Name = "Form1";
             Text = "Race Timer";
             FormClosing += Form1_FormClosing;
+            listBoxContextMenu.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label timeLabel;
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.Button stopButton;
         private System.Windows.Forms.Button resetButton;
         private System.Windows.Forms.Timer updateTimer;
         private System.Windows.Forms.Label errorLabel;
+        private ListBox resultslistBox;
+        private ContextMenuStrip listBoxContextMenu;
+        private ToolStripMenuItem removeTagToolStripMenuItem;
+        private TextBox timeInputTextBox;
+        private ToolStripMenuItem clearAllToolStripMenuItem;
     }
 }

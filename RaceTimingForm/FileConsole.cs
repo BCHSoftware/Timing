@@ -4,8 +4,8 @@ using System.Threading; // For locking
 
 public static class FileConsole
 {
-    private static StreamWriter _writer;
-    private static string _filePath;
+    private static StreamWriter? _writer;
+    private static string? _filePath;
     private static bool _isInitialized = false;
     private static readonly object _lockObject = new object(); // For thread safety
 

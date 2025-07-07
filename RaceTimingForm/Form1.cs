@@ -1,6 +1,7 @@
 using Impinj.OctaneSdk;
 using System.Diagnostics;
 using System.Media;
+using System.Text;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -293,6 +294,10 @@ namespace RaceTimingForm
                 reader.Start();
                 startButton.Enabled = true;
                 connectButton.Enabled = false;
+                numericPower.Enabled = false;
+                numericSensitivity.Enabled = false;
+                debugTextbox.Visible = false;
+                addButton.Visible = false;
             }
             catch (OctaneSdkException e)
             {
@@ -308,5 +313,41 @@ namespace RaceTimingForm
 
             }
         }
+
+        private void addButton_Click(object sender, EventArgs e)
+        {
+            startButton.Enabled = true;
+            resultslistBox.Items.Add(timeInputTextBox.Text + debugTextbox.Text);
+        }
+
+        private void resultslistBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Check for Ctrl+C combination
+            if (e.Control && e.KeyCode == Keys.C)
+            {
+                // Ensure there are selected items to copy
+                if (resultslistBox.SelectedItems.Count > 0)
+                {
+                    // Use StringBuilder for efficient string concatenation, especially for many items
+                    StringBuilder sb = new StringBuilder();
+
+                    // Iterate through all selected items
+                    foreach (object item in resultslistBox.SelectedItems)
+                    {
+                        sb.AppendLine(item.ToString()); // Add each item's text, followed by a newline
+                    }
+
+                    // Copy the combined text to the clipboard
+                    Clipboard.SetText(sb.ToString());
+
+                    // Optionally, provide user feedback
+                    //MessageBox.Show($"{resultslistBox.SelectedItems.Count} item(s) copied to clipboard.", "Copy Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Prevent the default handling of Ctrl+C (e.g., if another control has it)
+                    e.Handled = true;
+                }
+            }
+        }
     }
 }
+    

@@ -44,6 +44,8 @@
             label2 = new Label();
             numericPower = new NumericUpDown();
             numericSensitivity = new NumericUpDown();
+            addButton = new Button();
+            debugTextbox = new TextBox();
             listBoxContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericPower).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericSensitivity).BeginInit();
@@ -52,10 +54,9 @@
             // startButton
             // 
             startButton.Enabled = false;
-            startButton.Location = new Point(110, 108);
-            startButton.Margin = new Padding(2, 2, 2, 2);
+            startButton.Location = new Point(157, 180);
             startButton.Name = "startButton";
-            startButton.Size = new Size(98, 55);
+            startButton.Size = new Size(140, 92);
             startButton.TabIndex = 1;
             startButton.Text = "Start";
             startButton.UseVisualStyleBackColor = true;
@@ -64,10 +65,9 @@
             // stopButton
             // 
             stopButton.Enabled = false;
-            stopButton.Location = new Point(212, 108);
-            stopButton.Margin = new Padding(2, 2, 2, 2);
+            stopButton.Location = new Point(303, 180);
             stopButton.Name = "stopButton";
-            stopButton.Size = new Size(98, 55);
+            stopButton.Size = new Size(140, 92);
             stopButton.TabIndex = 2;
             stopButton.Text = "Stop";
             stopButton.UseVisualStyleBackColor = true;
@@ -76,10 +76,9 @@
             // resetButton
             // 
             resetButton.Enabled = false;
-            resetButton.Location = new Point(315, 108);
-            resetButton.Margin = new Padding(2, 2, 2, 2);
+            resetButton.Location = new Point(450, 180);
             resetButton.Name = "resetButton";
-            resetButton.Size = new Size(98, 55);
+            resetButton.Size = new Size(140, 92);
             resetButton.TabIndex = 3;
             resetButton.Text = "Reset";
             resetButton.UseVisualStyleBackColor = true;
@@ -94,61 +93,58 @@
             // 
             errorLabel.Font = new Font("Microsoft Sans Serif", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
             errorLabel.ForeColor = Color.Red;
-            errorLabel.Location = new Point(8, 290);
-            errorLabel.Margin = new Padding(2, 0, 2, 0);
+            errorLabel.Location = new Point(11, 483);
             errorLabel.Name = "errorLabel";
-            errorLabel.Size = new Size(711, 41);
+            errorLabel.Size = new Size(1016, 68);
             errorLabel.TabIndex = 4;
             // 
             // resultslistBox
             // 
             resultslistBox.ContextMenuStrip = listBoxContextMenu;
             resultslistBox.FormattingEnabled = true;
-            resultslistBox.ItemHeight = 15;
-            resultslistBox.Location = new Point(428, 7);
-            resultslistBox.Margin = new Padding(2, 2, 2, 2);
+            resultslistBox.ItemHeight = 25;
+            resultslistBox.Location = new Point(611, 12);
             resultslistBox.Name = "resultslistBox";
             resultslistBox.SelectionMode = SelectionMode.MultiExtended;
-            resultslistBox.Size = new Size(290, 229);
+            resultslistBox.Size = new Size(413, 379);
             resultslistBox.TabIndex = 5;
+            resultslistBox.KeyDown += resultslistBox_KeyDown;
             // 
             // listBoxContextMenu
             // 
             listBoxContextMenu.ImageScalingSize = new Size(24, 24);
             listBoxContextMenu.Items.AddRange(new ToolStripItem[] { removeTagToolStripMenuItem, clearAllToolStripMenuItem });
             listBoxContextMenu.Name = "listBoxContextMenu";
-            listBoxContextMenu.Size = new Size(139, 48);
+            listBoxContextMenu.Size = new Size(181, 68);
             // 
             // removeTagToolStripMenuItem
             // 
             removeTagToolStripMenuItem.Name = "removeTagToolStripMenuItem";
-            removeTagToolStripMenuItem.Size = new Size(138, 22);
+            removeTagToolStripMenuItem.Size = new Size(180, 32);
             removeTagToolStripMenuItem.Text = "Remove Tag";
             removeTagToolStripMenuItem.Click += removeTagToolStripMenuItem_Click;
             // 
             // clearAllToolStripMenuItem
             // 
             clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
-            clearAllToolStripMenuItem.Size = new Size(138, 22);
+            clearAllToolStripMenuItem.Size = new Size(180, 32);
             clearAllToolStripMenuItem.Text = "Clear All";
             clearAllToolStripMenuItem.Click += clearAllToolStripMenuItem_Click;
             // 
             // timeInputTextBox
             // 
             timeInputTextBox.Font = new Font("Consolas", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            timeInputTextBox.Location = new Point(122, 53);
-            timeInputTextBox.Margin = new Padding(2, 2, 2, 2);
+            timeInputTextBox.Location = new Point(174, 88);
             timeInputTextBox.Name = "timeInputTextBox";
-            timeInputTextBox.Size = new Size(260, 45);
+            timeInputTextBox.Size = new Size(370, 64);
             timeInputTextBox.TabIndex = 6;
             timeInputTextBox.Text = "MM:SS";
             // 
             // connectButton
             // 
-            connectButton.Location = new Point(21, 225);
-            connectButton.Margin = new Padding(2, 2, 2, 2);
+            connectButton.Location = new Point(30, 375);
             connectButton.Name = "connectButton";
-            connectButton.Size = new Size(78, 20);
+            connectButton.Size = new Size(111, 33);
             connectButton.TabIndex = 7;
             connectButton.Text = "Connect";
             connectButton.UseVisualStyleBackColor = true;
@@ -157,52 +153,67 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(115, 220);
-            label1.Margin = new Padding(2, 0, 2, 0);
+            label1.Location = new Point(164, 367);
             label1.Name = "label1";
-            label1.Size = new Size(43, 15);
+            label1.Size = new Size(64, 25);
             label1.TabIndex = 8;
             label1.Text = "Power:";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(193, 220);
-            label2.Margin = new Padding(2, 0, 2, 0);
+            label2.Location = new Point(276, 367);
             label2.Name = "label2";
-            label2.Size = new Size(63, 15);
+            label2.Size = new Size(95, 25);
             label2.TabIndex = 9;
             label2.Text = "Sensitivity:";
             // 
             // numericPower
             // 
             numericPower.Increment = new decimal(new int[] { 2, 0, 0, 0 });
-            numericPower.Location = new Point(121, 242);
-            numericPower.Margin = new Padding(2, 2, 2, 2);
+            numericPower.Location = new Point(173, 403);
             numericPower.Maximum = new decimal(new int[] { 40, 0, 0, 0 });
             numericPower.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
             numericPower.Name = "numericPower";
-            numericPower.Size = new Size(38, 23);
+            numericPower.Size = new Size(54, 31);
             numericPower.TabIndex = 10;
             numericPower.Value = new decimal(new int[] { 12, 0, 0, 0 });
             // 
             // numericSensitivity
             // 
             numericSensitivity.Increment = new decimal(new int[] { 2, 0, 0, 0 });
-            numericSensitivity.Location = new Point(201, 242);
-            numericSensitivity.Margin = new Padding(2, 2, 2, 2);
+            numericSensitivity.Location = new Point(287, 403);
             numericSensitivity.Maximum = new decimal(new int[] { 10, 0, 0, int.MinValue });
             numericSensitivity.Minimum = new decimal(new int[] { 90, 0, 0, int.MinValue });
             numericSensitivity.Name = "numericSensitivity";
-            numericSensitivity.Size = new Size(38, 23);
+            numericSensitivity.Size = new Size(54, 31);
             numericSensitivity.TabIndex = 11;
             numericSensitivity.Value = new decimal(new int[] { 80, 0, 0, int.MinValue });
             // 
+            // addButton
+            // 
+            addButton.Location = new Point(620, 397);
+            addButton.Name = "addButton";
+            addButton.Size = new Size(61, 34);
+            addButton.TabIndex = 12;
+            addButton.Text = "Add";
+            addButton.UseVisualStyleBackColor = true;
+            addButton.Click += addButton_Click;
+            // 
+            // debugTextbox
+            // 
+            debugTextbox.Location = new Point(685, 400);
+            debugTextbox.Name = "debugTextbox";
+            debugTextbox.Size = new Size(339, 31);
+            debugTextbox.TabIndex = 13;
+            // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(728, 337);
+            ClientSize = new Size(1040, 562);
+            Controls.Add(debugTextbox);
+            Controls.Add(addButton);
             Controls.Add(numericSensitivity);
             Controls.Add(numericPower);
             Controls.Add(label2);
@@ -214,7 +225,6 @@
             Controls.Add(resetButton);
             Controls.Add(stopButton);
             Controls.Add(startButton);
-            Margin = new Padding(2, 2, 2, 2);
             Name = "Form1";
             Text = "Race Timer";
             FormClosing += Form1_FormClosing;
@@ -241,5 +251,7 @@
         private Label label2;
         private NumericUpDown numericPower;
         private NumericUpDown numericSensitivity;
+        private Button addButton;
+        private TextBox debugTextbox;
     }
 }

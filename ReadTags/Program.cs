@@ -27,7 +27,7 @@ namespace OctaneSdkExamples
                     Console.WriteLine("Error: No hostname specified.  Pass in the reader hostname as a command line argument when running the Sdk Example.");
                     return;
                 }
-                string hostname = args[0];
+                string hostname = "SpeedwayR-16-50-19";
                 reader.Connect(hostname);
 
                 // Get the default settings

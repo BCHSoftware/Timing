@@ -135,11 +135,14 @@ namespace RaceTimingForm
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // Stop reading.
-            reader.Stop();
-
-            // Disconnect from the reader.
-            reader.Disconnect();
+            // Don't call the Stop method if the
+            // reader is already stopped.
+            if (reader.QueryStatus().IsSingulating)
+            {
+                reader.Stop();
+                // Disconnect from the reader.
+                reader.Disconnect();
+            }
 
             FileConsole.WriteLine("Application is closing. Shutting down FileFileConsole.");
             FileConsole.Close();
@@ -282,6 +285,9 @@ namespace RaceTimingForm
                 settings.Report.IncludeFirstSeenTime = true;
                 settings.Report.IncludeLastSeenTime = true;
 
+                // Send a tag report for every tag read.
+                settings.Report.Mode = ReportMode.Individual;
+
                 // Apply the newly modified settings.
                 reader.ApplySettings(settings);
 
@@ -290,8 +296,13 @@ namespace RaceTimingForm
                 // when tags reports are available.
                 reader.TagsReported += OnTagsReported;
 
-                // Start reading.
-                reader.Start();
+                // Don't call the Start method if the
+                // reader is already running.
+                if (!reader.QueryStatus().IsSingulating)
+                {
+                    // Start reading.
+                    reader.Start();
+                }
                 startButton.Enabled = true;
                 connectButton.Enabled = false;
                 numericPower.Enabled = false;

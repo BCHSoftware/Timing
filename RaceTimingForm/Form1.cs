@@ -40,7 +40,7 @@ namespace RaceTimingForm
                     // so this is the first time we've encountered it.
                     if (_firstSeenEpcs.Add(tag.Epc.ToString()))
                     {
-                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(timeInputTextBox.Text + tag.Epc)));
+                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(timeInputTextBox.Text + "\t" + tag.Epc.ToString().Substring(20))));
                     }
                     FileConsole.WriteLine("{0}, {1}, {2}, {3}",
                                             tag.Epc,

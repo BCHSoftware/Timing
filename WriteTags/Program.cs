@@ -17,7 +17,7 @@ namespace OctaneSdkExamples
         private const string ReaderHostname = "SpeedwayR-16-50-19";
 
         private static ImpinjReader reader = new ImpinjReader();
-        private static int tagCounter = 0; // To generate unique EPCs
+        private static int tagCounter = 1; // To generate unique EPCs
         private static readonly object lockObject = new object();
         private static HashSet<string> programmedEpcs = new HashSet<string>(); // Keep track of already programmed tags
 
@@ -50,10 +50,10 @@ namespace OctaneSdkExamples
 
                 // Enable all antennas
                 settings.Antennas.DisableAll();
-                for (ushort i = 1; i <= 4; i++) // Assuming up to 4 antennas
+                for (ushort i = 1; i <= 1; i++) // Let's program with only 1 (up to 4 antennas)
                 {
                     settings.Antennas.GetAntenna(i).IsEnabled = true;
-                    settings.Antennas.GetAntenna(i).TxPowerInDbm = 12.0; //  30 =Max power (adjust as needed)
+                    settings.Antennas.GetAntenna(i).TxPowerInDbm = 24; //  30 =Max power (adjust as needed)
                     settings.Antennas.GetAntenna(i).RxSensitivityInDbm = -70; // Good sensitivity (adjust as needed)
                 }
 
@@ -63,9 +63,21 @@ namespace OctaneSdkExamples
                 Console.WriteLine("Starting inventory (reading tags)...");
                 reader.Start();
 
-                Console.WriteLine("\nPress Enter to stop the program.");
-                Console.ReadLine();
+                int nextNum = tagCounter;
+                while (nextNum > 0)
+                {
+                    Console.WriteLine("Enter next tag # or <Enter> to skip to next. 0 to quit");
+                    string ans = Console.ReadLine();
+                    if (ans == "")
+                    {
+                        tagCounter++;
+                        continue;
+                    }
+                    int.TryParse(ans, out nextNum);
+                    tagCounter = nextNum;
+                }
 
+               
                 Console.WriteLine("Stopping reader...");
                 reader.Stop();
 
@@ -90,23 +102,26 @@ namespace OctaneSdkExamples
         {
             foreach (Tag tag in report.Tags)
             {
+                //Console.WriteLine($"\nTag found: EPC = {tag.Epc.ToHexString()}, Antenna = {tag.AntennaPortNumber}");
+
                 // Only process tags that haven't been programmed yet in this run
                 lock (lockObject)
                 {
                     if (programmedEpcs.Contains(tag.Epc.ToHexString()))
+                    {
                         continue;
+                        Console.WriteLine($"{tag.Epc.ToHexString()}Already seen.");
+                    }
                 }
 
-                Console.WriteLine($"\nTag found: EPC = {tag.Epc.ToHexString()}, Antenna = {tag.AntennaPortNumber}");
 
                 // Generate a new, unique EPC (example: sequential numbers)
                 string newEpcHexString;
                 lock (lockObject)
                 {
-                    tagCounter++;
                     // make the Hex look like a decimal for timing system
                     int value = Convert.ToInt32(tagCounter.ToString(), 16);
-                    
+
                     // A simple sequential EPC. Real-world EPCs are more complex (GS1, etc.)
                     // Ensure the new EPC has a valid length (e.g., 24 hex characters for 96-bit EPC)
                     newEpcHexString = $"30000000000000000000{value:X12}";
@@ -114,7 +129,7 @@ namespace OctaneSdkExamples
                     newEpcHexString = newEpcHexString.Substring(newEpcHexString.Length - 24);
                 }
 
-                Console.WriteLine($"Attempting to program tag {tag.Epc.ToHexString()} to new EPC: {newEpcHexString}...");
+                //Console.WriteLine($"Attempting to program tag {tag.Epc.ToHexString()} to new EPC: {newEpcHexString}...");
 
                 try
                 {
@@ -186,11 +201,12 @@ namespace OctaneSdkExamples
                 {
                     if (writeResult.OpId == 123) // Our EPC write operation
                     {
-                        Console.WriteLine($"  -> EPC write for {writeResult.Tag.Epc.ToHexString()} complete. Status: {writeResult.Result}");
+                        //Console.WriteLine($"  -> EPC write for {writeResult.Tag.Epc.ToHexString()} complete. Status: {writeResult.Result}");
                         if (writeResult.Result == WriteResultStatus.Success)
                         {
                             Console.WriteLine($"  -> Tag {writeResult.Tag.Epc.ToHexString()} successfully programmed!");
                             Console.Beep();
+                            tagCounter++; // only increment when successful
                         }
                         else
                         {

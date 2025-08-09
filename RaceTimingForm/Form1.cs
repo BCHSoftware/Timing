@@ -17,6 +17,8 @@ namespace RaceTimingForm
         static ImpinjReader reader = new ImpinjReader();
         private readonly HashSet<string> _firstSeenEpcs = new HashSet<string>();
         private readonly object _epcLock = new object();
+        private static readonly object lockObject = new object();
+        private static HashSet<string> programmedEpcs = new HashSet<string>(); // Keep track of already programmed tags
 
         public Form1()
         {
@@ -41,6 +43,8 @@ namespace RaceTimingForm
                     if (_firstSeenEpcs.Add(tag.Epc.ToString()))
                     {
                         this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(timeInputTextBox.Text + "\t" + tag.Epc.ToString().Substring(20))));
+                        this.Invoke((MethodInvoker)(() => dataGridView.Rows.Add(tag.Epc.ToString().Substring(20))));
+
                     }
                     FileConsole.WriteLine("{0}, {1}, {2}, {3}",
                                             tag.Epc,
@@ -137,11 +141,19 @@ namespace RaceTimingForm
         {
             // Don't call the Stop method if the
             // reader is already stopped.
-            if (reader.QueryStatus().IsSingulating)
+            try
             {
-                reader.Stop();
-                // Disconnect from the reader.
-                reader.Disconnect();
+                if (reader.IsConnected && reader.QueryStatus().IsSingulating)
+                {
+                    reader.Stop();
+                    // Disconnect from the reader.
+                    reader.Disconnect();
+                }
+
+            }
+            catch (Exception)
+            {
+                throw;
             }
 
             FileConsole.WriteLine("Application is closing. Shutting down FileFileConsole.");
@@ -329,6 +341,8 @@ namespace RaceTimingForm
         {
             startButton.Enabled = true;
             resultslistBox.Items.Add(timeInputTextBox.Text + debugTextbox.Text);
+            dataGridView.Rows.Add(debugTextbox.Text);
+
         }
 
         private void resultslistBox_KeyDown(object sender, KeyEventArgs e)
@@ -359,6 +373,167 @@ namespace RaceTimingForm
                 }
             }
         }
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.V))
+            {
+                PasteFromClipboard();
+                return true; // Indicate that we've handled the key press
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void PasteFromClipboard()
+        {
+            try
+            {
+                string clipboardText = Clipboard.GetText();
+                if (string.IsNullOrEmpty(clipboardText))
+                {
+                    return;
+                }
+
+                string[] rows = clipboardText.Split('\n');
+                int currentRowIndex = 0;
+                int currentColIndex = 1;
+
+                if (dataGridView.CurrentCell != null)
+                {
+                    currentColIndex = dataGridView.CurrentCell.ColumnIndex;
+                    currentRowIndex = dataGridView.CurrentCell.RowIndex;
+                }
+
+                foreach (string row in rows)
+                {
+                    if (string.IsNullOrEmpty(row.Trim()))
+                    {
+                        continue;
+                    }
+
+                    // Split by tab for columns
+                    string[] cells = row.Split('\t');
+                    for (int i = 0; i < cells.Length; i++)
+                    {
+                        if (currentColIndex + i < dataGridView.Columns.Count)
+                        {
+                            // Ensure enough rows exist to paste into
+                            if (currentRowIndex >= dataGridView.Rows.Count - 1)
+                            {
+                                dataGridView.Rows.Add();
+                            }
+                            dataGridView.Rows[currentRowIndex].Cells[currentColIndex + i].Value = cells[i];
+                        }
+                    }
+                    currentRowIndex++;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to paste data: " + ex.Message);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            int startNum = int.Parse(textFirstNum.Text);
+            for (int row = 0; row < dataGridView.Rows.Count; row++)
+            {
+                dataGridView.Rows[row].Cells[1].Value = startNum++;
+            }
+        }
+
+        private void buttonWrite_Click(object sender, EventArgs e)
+        {
+            for (int row = 0; row < dataGridView.Rows.Count; row++)
+            {
+                String origEPC = dataGridView.Rows[row].Cells[0].Value.ToString();
+                String newEPC = dataGridView.Rows[row].Cells[1].Value.ToString();
+                ProgramTagEpc(origEPC, 0, newEPC);
+            }
+        }
+        static void ProgramTagEpc(string currentEpcHexString, ushort currentPcBits, string newEpcHexString)
+        {
+            TagOpSequence seq = new TagOpSequence();
+
+            // Set the target tag: We target the tag with its CURRENT EPC.
+            // This ensures we write to the specific tag we just read.
+            seq.TargetTag.MemoryBank = MemoryBank.Epc;
+            seq.TargetTag.BitPointer = BitPointers.Epc;
+            seq.TargetTag.Data = currentEpcHexString;
+
+            // Set BlockWriteEnabled for better performance on supporting tags (Monza 4, 5, X)
+            // seq.BlockWriteEnabled = true;
+            // seq.BlockWriteWordCount = 2; // For 32-bit block writes
+
+            // 1. Create the EPC write operation
+            TagWriteOp writeEpcOp = new TagWriteOp();
+            writeEpcOp.Id = 123; // A unique ID for this operation instance
+            writeEpcOp.MemoryBank = MemoryBank.Epc;
+            writeEpcOp.WordPointer = WordPointers.Epc; // Start writing after CRC and PC bits
+            writeEpcOp.Data = TagData.FromHexString(newEpcHexString);
+            seq.Ops.Add(writeEpcOp);
+
+            // 2. Adjust and write PC bits if the EPC length changes
+            // EPC length in words (1 word = 16 bits = 4 hex characters)
+            ushort newEpcLenWords = (ushort)(newEpcHexString.Length / 4);
+            ushort newPcBits = PcBits.AdjustPcBits(currentPcBits, newEpcLenWords);
+
+            // Only write PC bits if they actually need to change
+            if (newPcBits != currentPcBits)
+            {
+                Console.WriteLine($"  -> Also updating PC bits from {currentPcBits:X4} to {newPcBits:X4} due to EPC length change.");
+                TagWriteOp writePcOp = new TagWriteOp();
+                writePcOp.Id = 456; // Another unique ID
+                writePcOp.MemoryBank = MemoryBank.Epc;
+                writePcOp.WordPointer = WordPointers.PcBits; // Start writing at the PC bits
+                writePcOp.Data = TagData.FromWord(newPcBits);
+                seq.Ops.Add(writePcOp);
+            }
+
+            // Add the operation sequence to the reader.
+            // The reader will queue this operation and execute it when the target tag is in range.
+            reader.AddOpSequence(seq);
+
+            // Add the original EPC and new EPC to the list of programmed EPCs to avoid re-programming it repeatedly
+            lock (lockObject)
+            {
+                programmedEpcs.Add(currentEpcHexString);
+                programmedEpcs.Add(newEpcHexString);
+            }
+        }
+
+        static void OnTagOpComplete(ImpinjReader reader, TagOpReport report)
+        {
+            foreach (TagOpResult result in report.Results)
+            {
+                if (result is TagWriteOpResult writeResult)
+                {
+                    if (writeResult.OpId == 123) // Our EPC write operation
+                    {
+                        //Console.WriteLine($"  -> EPC write for {writeResult.Tag.Epc.ToHexString()} complete. Status: {writeResult.Result}");
+                        if (writeResult.Result == WriteResultStatus.Success)
+                        {
+                            Console.WriteLine($"  -> Tag {writeResult.Tag.Epc.ToHexString()} successfully programmed!");
+                            Console.Beep();
+                        }
+                        else
+                        {
+                            Console.WriteLine($"  -> Failed to program tag {writeResult.Tag.Epc.ToHexString()}. Status: {writeResult.Result}");
+                            // If a write fails, remove from programmedEpcs so it can be reattempted
+                            lock (lockObject)
+                            {
+                                programmedEpcs.Remove(writeResult.Tag.Epc.ToHexString());
+                            }
+                        }
+                    }
+                    else if (writeResult.OpId == 456) // Our PC bits write operation
+                    {
+                        Console.WriteLine($"  -> PC bits write for {writeResult.Tag.Epc.ToHexString()} complete. Status: {writeResult.Result}");
+                    }
+                }
+            }
+        }
+
     }
 }
     

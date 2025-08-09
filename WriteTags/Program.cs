@@ -19,8 +19,8 @@ namespace OctaneSdkExamples
         private static ImpinjReader reader = new ImpinjReader();
         private static int tagCounter = 1; // To generate unique EPCs
         private static readonly object lockObject = new object();
-        private static HashSet<string> programmedEpcs = new HashSet<string>(); // Keep track of already programmed tags
-
+        //private static HashSet<string> programmedEpcs = new HashSet<string>(); 
+        private static Dictionary<string, Tag> programmedEpcs = new Dictionary<string, Tag>();// Keep track of already programmed tags
         static void Main(string[] args)
         {
             try
@@ -107,7 +107,7 @@ namespace OctaneSdkExamples
                 // Only process tags that haven't been programmed yet in this run
                 lock (lockObject)
                 {
-                    if (programmedEpcs.Contains(tag.Epc.ToHexString()))
+                    if (programmedEpcs.ContainsKey(tag.Epc.ToHexString()))
                     {
                         continue;
                         Console.WriteLine($"{tag.Epc.ToHexString()}Already seen.");
@@ -133,7 +133,7 @@ namespace OctaneSdkExamples
 
                 try
                 {
-                    ProgramTagEpc(tag.Epc.ToHexString(), tag.PcBits, newEpcHexString);
+                    ProgramTagEpc(tag.Epc.ToHexString(), tag, newEpcHexString);
                 }
                 catch (Exception ex)
                 {
@@ -142,7 +142,7 @@ namespace OctaneSdkExamples
             }
         }
 
-        static void ProgramTagEpc(string currentEpcHexString, ushort currentPcBits, string newEpcHexString)
+        static void ProgramTagEpc(string currentEpcHexString, Tag currentTag, string newEpcHexString)
         {
             TagOpSequence seq = new TagOpSequence();
 
@@ -167,12 +167,12 @@ namespace OctaneSdkExamples
             // 2. Adjust and write PC bits if the EPC length changes
             // EPC length in words (1 word = 16 bits = 4 hex characters)
             ushort newEpcLenWords = (ushort)(newEpcHexString.Length / 4);
-            ushort newPcBits = PcBits.AdjustPcBits(currentPcBits, newEpcLenWords);
+            ushort newPcBits = PcBits.AdjustPcBits(currentTag.PcBits , newEpcLenWords);
 
             // Only write PC bits if they actually need to change
-            if (newPcBits != currentPcBits)
+            if (newPcBits != currentTag.PcBits)
             {
-                Console.WriteLine($"  -> Also updating PC bits from {currentPcBits:X4} to {newPcBits:X4} due to EPC length change.");
+                Console.WriteLine($"  -> Also updating PC bits from {currentTag.PcBits:X4} to {newPcBits:X4} due to EPC length change.");
                 TagWriteOp writePcOp = new TagWriteOp();
                 writePcOp.Id = 456; // Another unique ID
                 writePcOp.MemoryBank = MemoryBank.Epc;
@@ -188,8 +188,8 @@ namespace OctaneSdkExamples
             // Add the original EPC and new EPC to the list of programmed EPCs to avoid re-programming it repeatedly
             lock (lockObject)
             {
-                programmedEpcs.Add(currentEpcHexString);
-                programmedEpcs.Add(newEpcHexString);
+                programmedEpcs.Add(currentEpcHexString,currentTag);
+                programmedEpcs.Add(newEpcHexString, currentTag);
             }
         }
 

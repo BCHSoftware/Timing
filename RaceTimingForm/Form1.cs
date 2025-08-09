@@ -15,10 +15,10 @@ namespace RaceTimingForm
         private TimeSpan _offsetTime = TimeSpan.Zero; // This will store your "set" value or accumulated paused time
 
         static ImpinjReader reader = new ImpinjReader();
-        private readonly HashSet<string> _firstSeenEpcs = new HashSet<string>();
+        private static Dictionary<string, Tag> _firstSeenEpcs = new Dictionary<string, Tag>();
         private readonly object _epcLock = new object();
         private static readonly object lockObject = new object();
-        private static HashSet<string> programmedEpcs = new HashSet<string>(); // Keep track of already programmed tags
+        private static Dictionary<string, Tag> programmedEpcs = new Dictionary<string, Tag>();// Keep track of already programmed tags
 
         public Form1()
         {
@@ -38,10 +38,10 @@ namespace RaceTimingForm
                 lock (_epcLock)
                 {
                     // Try to add the EPC to our set.
-                    // If Add() returns true, it means the EPC was NOT already in the set,
-                    // so this is the first time we've encountered it.
-                    if (_firstSeenEpcs.Add(tag.Epc.ToString()))
+                    // if this is the first time we've encountered it.
+                    if (!_firstSeenEpcs.ContainsKey(tag.Epc.ToString()))
                     {
+                        _firstSeenEpcs[tag.Epc.ToString()] = tag;
                         this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(timeInputTextBox.Text + "\t" + tag.Epc.ToString().Substring(20))));
                         this.Invoke((MethodInvoker)(() => dataGridView.Rows.Add(tag.Epc.ToString().Substring(20))));
 
@@ -199,7 +199,7 @@ namespace RaceTimingForm
                     foreach (object item in itemsToRemove)
                     {
                         resultslistBox.Items.Remove(item);
-                        _ = _firstSeenEpcs.Add(GetStringAfterFirstSpace(item.ToString()));
+                        _ = _firstSeenEpcs.Remove(GetStringAfterFirstSpace(item.ToString()));
                     }
                     MessageBox.Show($"{itemsToRemove.Count} item(s) removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -450,10 +450,10 @@ namespace RaceTimingForm
             {
                 String origEPC = dataGridView.Rows[row].Cells[0].Value.ToString();
                 String newEPC = dataGridView.Rows[row].Cells[1].Value.ToString();
-                ProgramTagEpc(origEPC, 0, newEPC);
+                ProgramTagEpc(origEPC, _firstSeenEpcs[origEPC], newEPC);
             }
         }
-        static void ProgramTagEpc(string currentEpcHexString, ushort currentPcBits, string newEpcHexString)
+        static void ProgramTagEpc(string currentEpcHexString, Tag currentTag, string newEpcHexString)
         {
             TagOpSequence seq = new TagOpSequence();
 
@@ -478,12 +478,12 @@ namespace RaceTimingForm
             // 2. Adjust and write PC bits if the EPC length changes
             // EPC length in words (1 word = 16 bits = 4 hex characters)
             ushort newEpcLenWords = (ushort)(newEpcHexString.Length / 4);
-            ushort newPcBits = PcBits.AdjustPcBits(currentPcBits, newEpcLenWords);
+            ushort newPcBits = PcBits.AdjustPcBits(currentTag.PcBits , newEpcLenWords);
 
             // Only write PC bits if they actually need to change
-            if (newPcBits != currentPcBits)
+            if (newPcBits != currentTag.PcBits)
             {
-                Console.WriteLine($"  -> Also updating PC bits from {currentPcBits:X4} to {newPcBits:X4} due to EPC length change.");
+                Console.WriteLine($"  -> Also updating PC bits from {currentTag.PcBits:X4} to {newPcBits:X4} due to EPC length change.");
                 TagWriteOp writePcOp = new TagWriteOp();
                 writePcOp.Id = 456; // Another unique ID
                 writePcOp.MemoryBank = MemoryBank.Epc;
@@ -499,8 +499,8 @@ namespace RaceTimingForm
             // Add the original EPC and new EPC to the list of programmed EPCs to avoid re-programming it repeatedly
             lock (lockObject)
             {
-                programmedEpcs.Add(currentEpcHexString);
-                programmedEpcs.Add(newEpcHexString);
+                programmedEpcs.Add(currentEpcHexString, currentTag);
+                programmedEpcs.Add(newEpcHexString, currentTag);
             }
         }
 
@@ -535,7 +535,6 @@ namespace RaceTimingForm
                 }
             }
         }
-
     }
 }
     

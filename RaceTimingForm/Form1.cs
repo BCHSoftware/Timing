@@ -307,6 +307,8 @@ namespace RaceTimingForm
                 // This specifies which method to call
                 // when tags reports are available.
                 reader.TagsReported += OnTagsReported;
+                reader.TagOpComplete += OnTagOpComplete;
+
 
                 // Don't call the Start method if the
                 // reader is already running.

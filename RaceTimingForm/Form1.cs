@@ -171,8 +171,9 @@ namespace RaceTimingForm
                     foreach (object item in itemsToRemove)
                     {
                         resultslistBox.Items.Remove(item);
+                       
                         _ = _firstSeenEpcs.Remove(GetStringAfterFirstSpace(item.ToString()));
-                        dataGridView.Rows.Clear();
+                        
                     }
                     MessageBox.Show($"{itemsToRemove.Count} item(s) removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -221,6 +222,8 @@ namespace RaceTimingForm
             {
                 resultslistBox.Items.Clear();
                 _firstSeenEpcs.Clear();
+                dataGridView.Rows.Clear();
+
                 MessageBox.Show($"All items removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }

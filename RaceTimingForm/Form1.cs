@@ -15,10 +15,9 @@ namespace RaceTimingForm
         private TimeSpan _offsetTime = TimeSpan.Zero; // This will store your "set" value or accumulated paused time
 
         static ImpinjReader reader = new ImpinjReader();
-        private static Dictionary<string, Tag> _firstSeenEpcs = new Dictionary<string, Tag>();
         private readonly object _epcLock = new object();
         private static readonly object lockObject = new object();
-        private static Dictionary<string, Tag> programmedEpcs = new Dictionary<string, Tag>();// Keep track of already programmed tags
+        private static Dictionary<string, Tag> _firstSeenEpcs = new Dictionary<string, Tag>();
 
         public Form1()
         {
@@ -26,33 +25,6 @@ namespace RaceTimingForm
             FileConsole.Initialize("RaceLog.txt");
             // Initialize the time label display
             timeInputTextBox.Text = "00:00";
-        }
-
-        void OnTagsReported(ImpinjReader sender, TagReport report)
-        {
-            foreach (Tag tag in report)
-            {
-                // Use a lock to ensure thread safety when accessing the HashSet
-                // This is crucial because OnTagsReported is called asynchronously
-                // and multiple reports might arrive concurrently.
-                lock (_epcLock)
-                {
-                    // Try to add the EPC to our set.
-                    // if this is the first time we've encountered it.
-                    if (!_firstSeenEpcs.ContainsKey(tag.Epc.ToString()))
-                    {
-                        _firstSeenEpcs[tag.Epc.ToString()] = tag;
-                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(timeInputTextBox.Text + "\t" + tag.Epc.ToString().Substring(20))));
-                        this.Invoke((MethodInvoker)(() => dataGridView.Rows.Add(tag.Epc.ToString().Substring(20))));
-
-                    }
-                    FileConsole.WriteLine("{0}, {1}, {2}, {3}",
-                                            tag.Epc,
-                                            timeInputTextBox.Text,
-                                            tag.FirstSeenTime.LocalDateTime,
-                                            tag.LastSeenTime.LocalDateTime);
-                }
-            }
         }
 
         // You might also want a way to clear _firstSeenEpcs if you want to reset the "first seen" status,
@@ -200,6 +172,7 @@ namespace RaceTimingForm
                     {
                         resultslistBox.Items.Remove(item);
                         _ = _firstSeenEpcs.Remove(GetStringAfterFirstSpace(item.ToString()));
+                        dataGridView.Rows.Clear();
                     }
                     MessageBox.Show($"{itemsToRemove.Count} item(s) removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -437,6 +410,8 @@ namespace RaceTimingForm
 
         private void button1_Click(object sender, EventArgs e)
         {
+            buttonWrite.Enabled = true;
+
             int startNum = int.Parse(textFirstNum.Text);
             for (int row = 0; row < dataGridView.Rows.Count; row++)
             {
@@ -446,11 +421,34 @@ namespace RaceTimingForm
 
         private void buttonWrite_Click(object sender, EventArgs e)
         {
-            for (int row = 0; row < dataGridView.Rows.Count; row++)
+            for (int row = 0; row < dataGridView.Rows.Count - 1; row++)
             {
                 String origEPC = dataGridView.Rows[row].Cells[0].Value.ToString();
                 String newEPC = dataGridView.Rows[row].Cells[1].Value.ToString();
-                ProgramTagEpc(origEPC, _firstSeenEpcs[origEPC], newEPC);
+
+                string newEpcHexString;
+                lock (lockObject)
+                {
+                    // make the Hex look like a decimal for timing system
+                    int value = Convert.ToInt32(newEPC, 16);
+
+                    // A simple sequential EPC. Real-world EPCs are more complex (GS1, etc.)
+                    // Ensure the new EPC has a valid length (e.g., 24 hex characters for 96-bit EPC)
+                    newEpcHexString = $"30000000000000000000{value:X12}";
+                    // Pad with leading zeros to make it 24 characters (96 bits) if needed.
+                    newEpcHexString = newEpcHexString.Substring(newEpcHexString.Length - 24);
+                }
+
+                //Console.WriteLine($"Attempting to program tag {tag.Epc.ToHexString()} to new EPC: {newEpcHexString}...");
+
+                try
+                {
+                    ProgramTagEpc(_firstSeenEpcs[origEPC].Epc.ToHexString(), _firstSeenEpcs[origEPC], newEpcHexString);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error scheduling write for tag {origEPC}: {ex.Message}");
+                }
             }
         }
         static void ProgramTagEpc(string currentEpcHexString, Tag currentTag, string newEpcHexString)
@@ -495,15 +493,35 @@ namespace RaceTimingForm
             // Add the operation sequence to the reader.
             // The reader will queue this operation and execute it when the target tag is in range.
             reader.AddOpSequence(seq);
-
-            // Add the original EPC and new EPC to the list of programmed EPCs to avoid re-programming it repeatedly
-            lock (lockObject)
+        }
+        void OnTagsReported(ImpinjReader sender, TagReport report)
+        {
+            foreach (Tag tag in report)
             {
-                programmedEpcs.Add(currentEpcHexString, currentTag);
-                programmedEpcs.Add(newEpcHexString, currentTag);
+                // Use a lock to ensure thread safety when accessing the HashSet
+                // This is crucial because OnTagsReported is called asynchronously
+                // and multiple reports might arrive concurrently.
+                lock (_epcLock)
+                {
+                    // Try to add the EPC to our set.
+                    // if this is the first time we've encountered it.
+                    if (!_firstSeenEpcs.ContainsKey(tag.Epc.ToString()))
+                    {
+                        string t = tag.Epc.ToString();
+                        _firstSeenEpcs[t] = tag;
+
+                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(timeInputTextBox.Text + "\t" + t.Substring(t.Length - (t.Length>3?3:0)))));
+                        this.Invoke((MethodInvoker)(() => dataGridView.Rows.Add(tag.Epc.ToString())));
+
+                    }
+                    FileConsole.WriteLine("{0}, {1}, {2}, {3}",
+                                            tag.Epc,
+                                            timeInputTextBox.Text,
+                                            tag.FirstSeenTime.LocalDateTime,
+                                            tag.LastSeenTime.LocalDateTime);
+                }
             }
         }
-
         static void OnTagOpComplete(ImpinjReader reader, TagOpReport report)
         {
             foreach (TagOpResult result in report.Results)
@@ -524,7 +542,7 @@ namespace RaceTimingForm
                             // If a write fails, remove from programmedEpcs so it can be reattempted
                             lock (lockObject)
                             {
-                                programmedEpcs.Remove(writeResult.Tag.Epc.ToHexString());
+                                //programmedEpcs.Remove(writeResult.Tag.Epc.ToHexString());
                             }
                         }
                     }

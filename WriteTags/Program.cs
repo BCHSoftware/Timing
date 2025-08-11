@@ -48,7 +48,7 @@ namespace OctaneSdkExamples
                 // Set reader mode for good performance
                 settings.ReaderMode = ReaderMode.AutoSetDenseReader;
 
-                // Enable all antennas
+                // Enable one antenna
                 settings.Antennas.DisableAll();
                 for (ushort i = 1; i <= 1; i++) // Let's program with only 1 (up to 4 antennas)
                 {

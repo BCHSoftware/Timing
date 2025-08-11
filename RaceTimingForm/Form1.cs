@@ -171,9 +171,9 @@ namespace RaceTimingForm
                     foreach (object item in itemsToRemove)
                     {
                         resultslistBox.Items.Remove(item);
-                       
+
                         _ = _firstSeenEpcs.Remove(GetStringAfterFirstSpace(item.ToString()));
-                        
+
                     }
                     MessageBox.Show($"{itemsToRemove.Count} item(s) removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -242,40 +242,64 @@ namespace RaceTimingForm
 
                 Settings settings = reader.QueryDefaultSettings();
 
-                // Tell the reader to include the antenna number
-                // in all tag reports. Other fields can be added
-                // to the reports in the same way by setting the 
-                // appropriate Report.IncludeXXXXXXX property.
-                settings.Report.IncludeAntennaPortNumber = true;
+                if (radioButton1.Checked)
+                {
 
-                // The reader can be set into various modes in which reader
-                // dynamics are optimized for specific regions and environments.
-                // The following mode, AutoSetDenseReaderDeepScan (1002), monitors RF noise
-                // and interference then automatically and continuously optimizes
-                // the reader’s configuration
-                settings.RfMode = 1002;
-                settings.SearchMode = SearchMode.DualTarget;
-                settings.Session = 2;
+                    // Tell the reader to include the antenna number
+                    // in all tag reports. Other fields can be added
+                    // to the reports in the same way by setting the 
+                    // appropriate Report.IncludeXXXXXXX property.
+                    settings.Report.IncludeAntennaPortNumber = true;
 
-                // Disable all antennas.
-                settings.Antennas.DisableAll();
-                // Enable antenna #1. Disable all others.
-                settings.Antennas.GetAntenna(1).IsEnabled = true;
-                // Enable antenna #2. Disable all others.
-                settings.Antennas.GetAntenna(2).IsEnabled = true;
+                    // The reader can be set into various modes in which reader
+                    // dynamics are optimized for specific regions and environments.
+                    // The following mode, AutoSetDenseReaderDeepScan (1002), monitors RF noise
+                    // and interference then automatically and continuously optimizes
+                    // the reader’s configuration
+                    settings.RfMode = 1002;
+                    settings.SearchMode = SearchMode.DualTarget;
+                    settings.Session = 2;
 
-                // Set the Transmit Power and 
-                // You can also set them to specific values like this...
-                settings.Antennas.GetAntenna(1).TxPowerInDbm = (double)numericPower.Value;
-                settings.Antennas.GetAntenna(1).RxSensitivityInDbm = (double)numericSensitivity.Value;
-                settings.Antennas.GetAntenna(2).TxPowerInDbm = (double)numericPower.Value;
-                settings.Antennas.GetAntenna(2).RxSensitivityInDbm = (double)numericSensitivity.Value;
-                settings.Report.IncludeFirstSeenTime = true;
-                settings.Report.IncludeLastSeenTime = true;
+                    // Disable all antennas.
+                    settings.Antennas.DisableAll();
+                    // Enable antenna #1. Disable all others.
+                    settings.Antennas.GetAntenna(1).IsEnabled = true;
+                    // Enable antenna #2. Disable all others.
+                    settings.Antennas.GetAntenna(2).IsEnabled = true;
 
-                // Send a tag report for every tag read.
-                settings.Report.Mode = ReportMode.Individual;
+                    // Set the Transmit Power and 
+                    // You can also set them to specific values like this...
+                    settings.Antennas.GetAntenna(1).TxPowerInDbm = (double)numericPower.Value;
+                    settings.Antennas.GetAntenna(1).RxSensitivityInDbm = (double)numericSensitivity.Value;
+                    settings.Antennas.GetAntenna(2).TxPowerInDbm = (double)numericPower.Value;
+                    settings.Antennas.GetAntenna(2).RxSensitivityInDbm = (double)numericSensitivity.Value;
+                    settings.Report.IncludeFirstSeenTime = true;
+                    settings.Report.IncludeLastSeenTime = true;
 
+                    // Send a tag report for every tag read.
+                    settings.Report.Mode = ReportMode.Individual;
+                }
+                if (radioButton2.Checked)
+                {
+
+                    settings.Report.IncludeAntennaPortNumber = true;
+                    settings.Report.IncludePeakRssi = true;
+                    settings.Report.IncludePcBits = true; // Essential for correct EPC writing
+                    settings.Report.IncludeFirstSeenTime = true;
+                    settings.Report.IncludeLastSeenTime = true;
+
+                    // Set reader mode for good performance
+                    settings.ReaderMode = ReaderMode.AutoSetDenseReader;
+
+                    // Enable one antenna
+                    settings.Antennas.DisableAll();
+                    for (ushort i = 1; i <= 1; i++) // Let's program with only 1 (up to 4 antennas)
+                    {
+                        settings.Antennas.GetAntenna(i).IsEnabled = true;
+                        settings.Antennas.GetAntenna(i).TxPowerInDbm = 24; //  30 =Max power (adjust as needed)
+                        settings.Antennas.GetAntenna(i).RxSensitivityInDbm = -70; // Good sensitivity (adjust as needed)
+                    }
+                }
                 // Apply the newly modified settings.
                 reader.ApplySettings(settings);
 
@@ -424,33 +448,36 @@ namespace RaceTimingForm
 
         private void buttonWrite_Click(object sender, EventArgs e)
         {
-            for (int row = 0; row < dataGridView.Rows.Count - 1; row++)
+            for (int row = 0; row < dataGridView.Rows.Count; row++)
             {
-                String origEPC = dataGridView.Rows[row].Cells[0].Value.ToString();
-                String newEPC = dataGridView.Rows[row].Cells[1].Value.ToString();
-
-                string newEpcHexString;
-                lock (lockObject)
+                if (dataGridView.Rows[row].Cells[1].Value != null)
                 {
-                    // make the Hex look like a decimal for timing system
-                    int value = Convert.ToInt32(newEPC, 16);
+                    String origEPC = dataGridView.Rows[row].Cells[0].Value.ToString();
+                    String newEPC = dataGridView.Rows[row].Cells[1].Value.ToString();
 
-                    // A simple sequential EPC. Real-world EPCs are more complex (GS1, etc.)
-                    // Ensure the new EPC has a valid length (e.g., 24 hex characters for 96-bit EPC)
-                    newEpcHexString = $"30000000000000000000{value:X12}";
-                    // Pad with leading zeros to make it 24 characters (96 bits) if needed.
-                    newEpcHexString = newEpcHexString.Substring(newEpcHexString.Length - 24);
-                }
+                    string newEpcHexString;
+                    lock (lockObject)
+                    {
+                        // make the Hex look like a decimal for timing system
+                        int value = Convert.ToInt32(newEPC, 16);
 
-                //Console.WriteLine($"Attempting to program tag {tag.Epc.ToHexString()} to new EPC: {newEpcHexString}...");
+                        // A simple sequential EPC. Real-world EPCs are more complex (GS1, etc.)
+                        // Ensure the new EPC has a valid length (e.g., 24 hex characters for 96-bit EPC)
+                        newEpcHexString = $"30000000000000000000{value:X12}";
+                        // Pad with leading zeros to make it 24 characters (96 bits) if needed.
+                        newEpcHexString = newEpcHexString.Substring(newEpcHexString.Length - 24);
+                    }
 
-                try
-                {
-                    ProgramTagEpc(_firstSeenEpcs[origEPC].Epc.ToHexString(), _firstSeenEpcs[origEPC], newEpcHexString);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error scheduling write for tag {origEPC}: {ex.Message}");
+                    //Console.WriteLine($"Attempting to program tag {tag.Epc.ToHexString()} to new EPC: {newEpcHexString}...");
+
+                    try
+                    {
+                        ProgramTagEpc(_firstSeenEpcs[origEPC].Epc.ToHexString(), _firstSeenEpcs[origEPC], newEpcHexString);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error scheduling write for tag {origEPC}: {ex.Message}");
+                    }
                 }
             }
         }
@@ -479,7 +506,7 @@ namespace RaceTimingForm
             // 2. Adjust and write PC bits if the EPC length changes
             // EPC length in words (1 word = 16 bits = 4 hex characters)
             ushort newEpcLenWords = (ushort)(newEpcHexString.Length / 4);
-            ushort newPcBits = PcBits.AdjustPcBits(currentTag.PcBits , newEpcLenWords);
+            ushort newPcBits = PcBits.AdjustPcBits(currentTag.PcBits, newEpcLenWords);
 
             // Only write PC bits if they actually need to change
             if (newPcBits != currentTag.PcBits)
@@ -513,7 +540,7 @@ namespace RaceTimingForm
                         string t = tag.Epc.ToString();
                         _firstSeenEpcs[t] = tag;
 
-                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(timeInputTextBox.Text + "\t" + t.Substring(t.Length - (t.Length>3?3:0)))));
+                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(timeInputTextBox.Text + "\t" + t.Substring(t.Length - (t.Length > 3 ? 3 : 0)))));
                         this.Invoke((MethodInvoker)(() => dataGridView.Rows.Add(tag.Epc.ToString())));
 
                     }
@@ -555,6 +582,11 @@ namespace RaceTimingForm
                     }
                 }
             }
+        }
+
+        private void dataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

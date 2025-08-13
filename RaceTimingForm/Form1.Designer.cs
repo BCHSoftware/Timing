@@ -173,9 +173,10 @@
             resultslistBox.Location = new Point(469, 7);
             resultslistBox.Margin = new Padding(2, 3, 2, 3);
             resultslistBox.Name = "resultslistBox";
-            resultslistBox.SelectionMode = SelectionMode.MultiExtended;
+            resultslistBox.SelectionMode = SelectionMode.None;
             resultslistBox.Size = new Size(331, 452);
             resultslistBox.TabIndex = 15;
+            resultslistBox.KeyDown += resultslistBox_KeyDown;
             // 
             // resetButton
             // 

@@ -320,36 +320,29 @@ namespace RaceTimingForm
             resultslistBox.Items.Add(timeInputTextBox.Text + debugTextbox.Text);
             dataGridView.Rows.Add(debugTextbox.Text);
             if (checkBeep.Checked)
-                Console.Beep(500, 50); // Beep to indicate a new tag was found
+                Console.Beep(500, 25); // Beep to indicate a new tag was found
 
         }
 
         private void resultslistBox_KeyDown(object sender, KeyEventArgs e)
         {
+            // Use StringBuilder for efficient string concatenation, especially for many items
+
             // Check for Ctrl+C combination
             if (e.Control && e.KeyCode == Keys.C)
             {
-                // Ensure there are selected items to copy
-                if (resultslistBox.SelectedItems.Count > 0)
+                StringBuilder sb = new StringBuilder();
+               
+                foreach (object item in resultslistBox.Items)
                 {
-                    // Use StringBuilder for efficient string concatenation, especially for many items
-                    StringBuilder sb = new StringBuilder();
-
-                    // Iterate through all selected items
-                    foreach (object item in resultslistBox.SelectedItems)
-                    {
-                        sb.AppendLine(item.ToString()); // Add each item's text, followed by a newline
-                    }
-
-                    // Copy the combined text to the clipboard
-                    Clipboard.SetText(sb.ToString());
-
-                    // Optionally, provide user feedback
-                    //MessageBox.Show($"{resultslistBox.SelectedItems.Count} item(s) copied to clipboard.", "Copy Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    // Prevent the default handling of Ctrl+C (e.g., if another control has it)
-                    e.Handled = true;
+                    sb.AppendLine(item.ToString());
                 }
+
+                // Copy the combined text to the clipboard
+                Clipboard.SetText(sb.ToString());
+
+                // Prevent the default handling of Ctrl+C (e.g., if another control has it)
+                e.Handled = true;
             }
         }
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -516,7 +509,7 @@ namespace RaceTimingForm
                         this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(item)));
                         this.Invoke((MethodInvoker)(() => dataGridView.Rows.Insert(0,tag.Epc.ToString())));
                         if(checkBeep.Checked)
-                            Console.Beep(500, 50); // Beep to indicate a new tag was found
+                            Console.Beep(500, 20); // Beep to indicate a new tag was found
 
                     }
                     this.Invoke((MethodInvoker)(() => rawListBox.Items.Insert(0, t)));

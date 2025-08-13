@@ -109,8 +109,8 @@ namespace OctaneSdkExamples
                 {
                     if (programmedEpcs.ContainsKey(tag.Epc.ToHexString()))
                     {
-                        continue;
                         Console.WriteLine($"{tag.Epc.ToHexString()}Already seen.");
+                        continue;
                     }
                 }
 

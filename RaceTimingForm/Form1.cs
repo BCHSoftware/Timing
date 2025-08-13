@@ -598,8 +598,8 @@ namespace RaceTimingForm
     }
     public class TagListBoxItem
     {
-        public string DisplayText { get; set; }
-        public string Tag { get; set; }
+        public required string DisplayText { get; set; }
+        public required string Tag { get; set; }
         public override string ToString()
         {
             return DisplayText;

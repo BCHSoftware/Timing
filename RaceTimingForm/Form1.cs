@@ -129,7 +129,20 @@ namespace RaceTimingForm
             }
 
             FileConsole.WriteLine("Application is closing. Shutting down FileFileConsole.");
-            FileConsole.Close();
+            SaveResults();
+        }
+        private void SaveResults()
+        {
+            string timestamp = DateTime.Now.ToString("HHmmssfff");
+            string fPath = "results_" + timestamp + ".txt";
+            using (StreamWriter sw = new StreamWriter(fPath))
+            {
+                foreach (object item in resultslistBox.Items)
+                {
+                    sw.WriteLine(item.ToString());
+                }
+                sw.Close();
+            }
         }
 
         private void removeTagToolStripMenuItem_Click(object sender, EventArgs e)
@@ -171,8 +184,9 @@ namespace RaceTimingForm
                     foreach (object item in itemsToRemove)
                     {
                         resultslistBox.Items.Remove(item);
-
-                        _ = _firstSeenEpcs.Remove(GetStringAfterFirstSpace(item.ToString()));
+                        TagListBoxItem i = (TagListBoxItem) item;
+                        if (_firstSeenEpcs.ContainsKey(i.Tag))
+                            _ = _firstSeenEpcs.Remove(i.Tag);
 
                     }
                     MessageBox.Show($"{itemsToRemove.Count} item(s) removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -207,6 +221,8 @@ namespace RaceTimingForm
 
         private void clearAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SaveResults();
+
             // Prepare the confirmation message
             string confirmationMessage;
             confirmationMessage = $"Are you sure you want to remove {resultslistBox.Items.Count} items?";
@@ -217,7 +233,7 @@ namespace RaceTimingForm
                 "Confirm Removal",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
-
+            
             if (confirmResult == DialogResult.Yes)
             {
                 resultslistBox.Items.Clear();
@@ -535,15 +551,19 @@ namespace RaceTimingForm
                 {
                     // Try to add the EPC to our set.
                     // if this is the first time we've encountered it.
+                    string t = tag.Epc.ToString();
+                    t = t.Substring(t.Length - (t.Length > 3 ? 3 : 0));
+
                     if (!_firstSeenEpcs.ContainsKey(tag.Epc.ToString()))
                     {
-                        string t = tag.Epc.ToString();
-                        _firstSeenEpcs[t] = tag;
+                        _firstSeenEpcs[tag.Epc.ToString()] = tag;
 
-                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(timeInputTextBox.Text + "\t" + t.Substring(t.Length - (t.Length > 3 ? 3 : 0)))));
-                        this.Invoke((MethodInvoker)(() => dataGridView.Rows.Add(tag.Epc.ToString())));
-
+                        var item = new TagListBoxItem { DisplayText = timeInputTextBox.Text + "\t" + t, Tag = tag.Epc.ToString() };
+                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(item)));
+                        this.Invoke((MethodInvoker)(() => dataGridView.Rows.Insert(0,tag.Epc.ToString())));
                     }
+                    this.Invoke((MethodInvoker)(() => rawListBox.Items.Insert(0, t)));
+
                     FileConsole.WriteLine("{0}, {1}, {2}, {3}",
                                             tag.Epc,
                                             timeInputTextBox.Text,
@@ -586,8 +606,54 @@ namespace RaceTimingForm
 
         private void dataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex <= 0 && e.ColumnIndex == 1)
+                dataGridView.BeginEdit(true);
+        }
 
+        private void dataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            int row = e.RowIndex;
+            int col = e.ColumnIndex;
+            
+            if (dataGridView.Rows[row].Cells[1].Value != null)
+            {
+                String origEPC = dataGridView.Rows[row].Cells[0].Value.ToString();
+                String newEPC = dataGridView.Rows[row].Cells[1].Value.ToString();
+
+                string newEpcHexString;
+                lock (lockObject)
+                {
+                    // make the Hex look like a decimal for timing system
+                    int value = Convert.ToInt32(newEPC, 16);
+
+                    // A simple sequential EPC. Real-world EPCs are more complex (GS1, etc.)
+                    // Ensure the new EPC has a valid length (e.g., 24 hex characters for 96-bit EPC)
+                    newEpcHexString = $"30000000000000000000{value:X12}";
+                    // Pad with leading zeros to make it 24 characters (96 bits) if needed.
+                    newEpcHexString = newEpcHexString.Substring(newEpcHexString.Length - 24);
+                }
+
+                //Console.WriteLine($"Attempting to program tag {tag.Epc.ToHexString()} to new EPC: {newEpcHexString}...");
+
+                try
+                {
+                    ProgramTagEpc(_firstSeenEpcs[origEPC].Epc.ToHexString(), _firstSeenEpcs[origEPC], newEpcHexString);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error scheduling write for tag {origEPC}: {ex.Message}");
+                }
+            }
         }
     }
+    public class TagListBoxItem
+    {
+        public string DisplayText { get; set; }
+        public string Tag { get; set; }
+        public override string ToString()
+        {
+            return DisplayText;
+        }
+    }
+
 }
-    

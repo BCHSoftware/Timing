@@ -44,19 +44,20 @@
             stopButton = new Button();
             startButton = new Button();
             tabConfigure = new TabPage();
+            rawListBox = new ListBox();
             radioButton2 = new RadioButton();
             radioButton1 = new RadioButton();
             buttonWrite = new Button();
             textFirstNum = new TextBox();
             button1 = new Button();
             dataGridView = new DataGridView();
+            colTag = new DataGridViewTextBoxColumn();
+            colNumber = new DataGridViewTextBoxColumn();
             numericSensitivity = new NumericUpDown();
             numericPower = new NumericUpDown();
             label2 = new Label();
             label1 = new Label();
             connectButton = new Button();
-            colTag = new DataGridViewTextBoxColumn();
-            colNumber = new DataGridViewTextBoxColumn();
             listBoxContextMenu.SuspendLayout();
             tabControl1.SuspendLayout();
             tabRace.SuspendLayout();
@@ -210,6 +211,7 @@
             // 
             // tabConfigure
             // 
+            tabConfigure.Controls.Add(rawListBox);
             tabConfigure.Controls.Add(radioButton2);
             tabConfigure.Controls.Add(radioButton1);
             tabConfigure.Controls.Add(buttonWrite);
@@ -229,6 +231,15 @@
             tabConfigure.TabIndex = 1;
             tabConfigure.Text = "Configure";
             tabConfigure.UseVisualStyleBackColor = true;
+            // 
+            // rawListBox
+            // 
+            rawListBox.FormattingEnabled = true;
+            rawListBox.ItemHeight = 15;
+            rawListBox.Location = new Point(541, 7);
+            rawListBox.Name = "rawListBox";
+            rawListBox.Size = new Size(155, 184);
+            rawListBox.TabIndex = 33;
             // 
             // radioButton2
             // 
@@ -292,9 +303,26 @@
             dataGridView.Margin = new Padding(2);
             dataGridView.Name = "dataGridView";
             dataGridView.RowHeadersWidth = 62;
-            dataGridView.Size = new Size(354, 248);
+            dataGridView.Size = new Size(310, 248);
             dataGridView.TabIndex = 27;
             dataGridView.CellContentClick += dataGridView_CellContentClick;
+            dataGridView.CellEndEdit += dataGridView_CellEndEdit;
+            // 
+            // colTag
+            // 
+            colTag.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+            colTag.HeaderText = "Tag";
+            colTag.MinimumWidth = 8;
+            colTag.Name = "colTag";
+            colTag.ReadOnly = true;
+            colTag.Width = 50;
+            // 
+            // colNumber
+            // 
+            colNumber.HeaderText = "Number";
+            colNumber.MinimumWidth = 8;
+            colNumber.Name = "colNumber";
+            colNumber.Width = 150;
             // 
             // numericSensitivity
             // 
@@ -351,26 +379,11 @@
             connectButton.UseVisualStyleBackColor = true;
             connectButton.Click += connectButton_Click;
             // 
-            // colTag
-            // 
-            colTag.HeaderText = "Tag";
-            colTag.MinimumWidth = 8;
-            colTag.Name = "colTag";
-            colTag.ReadOnly = true;
-            colTag.Width = 160;
-            // 
-            // colNumber
-            // 
-            colNumber.HeaderText = "Number";
-            colNumber.MinimumWidth = 8;
-            colNumber.Name = "colNumber";
-            colNumber.Width = 150;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(959, 391);
+            ClientSize = new Size(716, 391);
             Controls.Add(tabControl1);
             Controls.Add(errorLabel);
             Margin = new Padding(2);
@@ -416,6 +429,7 @@
         private Button buttonWrite;
         private RadioButton radioButton2;
         private RadioButton radioButton1;
+        private ListBox rawListBox;
         private DataGridViewTextBoxColumn colTag;
         private DataGridViewTextBoxColumn colNumber;
     }

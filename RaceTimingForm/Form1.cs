@@ -45,9 +45,10 @@ namespace RaceTimingForm
             {
                 _offsetTime = TimeSpan.ParseExact(timeInputTextBox.Text, "mm\\:ss", null);
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
-
+                FileConsole.WriteLine("Invalid time format: {0}", ex.Message);
+                _offsetTime = TimeSpan.Zero;
             }
 
             stopwatch.Start(); // Start the Stopwatch
@@ -141,37 +142,18 @@ namespace RaceTimingForm
                 {
                     sw.WriteLine(item.ToString());
                 }
-                sw.Close();
             }
         }
 
         private void removeTagToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Check if any items are selected
             if (resultslistBox.SelectedItems.Count > 0)
             {
-                // Create a temporary list to hold the items to remove.
-                // This is crucial because modifying the original collection while iterating
-                // over it (myListBox.SelectedItems) can lead to errors.
-                List<object> itemsToRemove = new List<object>();
+                List<object> itemsToRemove = new List<object>(resultslistBox.SelectedItems.Cast<object>());
+                string confirmationMessage = itemsToRemove.Count == 1
+                    ? $"Are you sure you want to remove '{itemsToRemove[0]}'?"
+                    : $"Are you sure you want to remove {itemsToRemove.Count} selected items?";
 
-                foreach (object selectedItem in resultslistBox.SelectedItems)
-                {
-                    itemsToRemove.Add(selectedItem);
-                }
-
-                // Prepare the confirmation message
-                string confirmationMessage;
-                if (itemsToRemove.Count == 1)
-                {
-                    confirmationMessage = $"Are you sure you want to remove '{itemsToRemove[0].ToString()}'?";
-                }
-                else
-                {
-                    confirmationMessage = $"Are you sure you want to remove {itemsToRemove.Count} selected items?";
-                }
-
-                // Display a confirmation message before removing
                 DialogResult confirmResult = MessageBox.Show(
                     confirmationMessage,
                     "Confirm Removal",
@@ -180,42 +162,19 @@ namespace RaceTimingForm
 
                 if (confirmResult == DialogResult.Yes)
                 {
-                    // Now, safely remove each item from the ListBox's Items collection
-                    foreach (object item in itemsToRemove)
-                    {
-                        resultslistBox.Items.Remove(item);
-                        TagListBoxItem i = (TagListBoxItem) item;
-                        if (_firstSeenEpcs.ContainsKey(i.Tag))
-                            _ = _firstSeenEpcs.Remove(i.Tag);
-
-                    }
+                    RemoveSelectedItemsFromListBox(resultslistBox);
                     MessageBox.Show($"{itemsToRemove.Count} item(s) removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
-        public static string GetStringAfterFirstSpace(string input)
+        private void RemoveSelectedItemsFromListBox(ListBox listBox)
         {
-            // Check if the input string is null or empty to prevent errors
-            if (string.IsNullOrEmpty(input))
+            List<object> itemsToRemove = new List<object>(listBox.SelectedItems.Cast<object>());
+            foreach (object item in itemsToRemove)
             {
-                return string.Empty; // Or return null, depending on desired behavior for empty/null input
-            }
-
-            // Find the index of the first space
-            int firstSpaceIndex = input.IndexOf(' ');
-
-            // If a space is found and it's not the last character
-            if (firstSpaceIndex >= 0 && firstSpaceIndex < input.Length - 1)
-            {
-                // Return the substring starting from the character *after* the first space
-                return input.Substring(firstSpaceIndex + 1);
-            }
-            else
-            {
-                // If no space is found, or the space is the very last character,
-                // there's nothing after the first space, so return an empty string or the original string.
-                // Returning empty string is common for "everything after".
-                return string.Empty;
+                listBox.Items.Remove(item);
+                if (item is TagListBoxItem i && _firstSeenEpcs.ContainsKey(i.Tag))
+                    _ = _firstSeenEpcs.Remove(i.Tag);
             }
         }
 
@@ -360,6 +319,8 @@ namespace RaceTimingForm
             startButton.Enabled = true;
             resultslistBox.Items.Add(timeInputTextBox.Text + debugTextbox.Text);
             dataGridView.Rows.Add(debugTextbox.Text);
+            if (checkBeep.Checked)
+                Console.Beep(500, 50); // Beep to indicate a new tag was found
 
         }
 
@@ -474,14 +435,7 @@ namespace RaceTimingForm
                     string newEpcHexString;
                     lock (lockObject)
                     {
-                        // make the Hex look like a decimal for timing system
-                        int value = Convert.ToInt32(newEPC, 16);
-
-                        // A simple sequential EPC. Real-world EPCs are more complex (GS1, etc.)
-                        // Ensure the new EPC has a valid length (e.g., 24 hex characters for 96-bit EPC)
-                        newEpcHexString = $"30000000000000000000{value:X12}";
-                        // Pad with leading zeros to make it 24 characters (96 bits) if needed.
-                        newEpcHexString = newEpcHexString.Substring(newEpcHexString.Length - 24);
+                        newEpcHexString = FormatEpcHexString(newEPC);
                     }
 
                     //Console.WriteLine($"Attempting to program tag {tag.Epc.ToHexString()} to new EPC: {newEpcHexString}...");
@@ -561,6 +515,9 @@ namespace RaceTimingForm
                         var item = new TagListBoxItem { DisplayText = timeInputTextBox.Text + "\t" + t, Tag = tag.Epc.ToString() };
                         this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(item)));
                         this.Invoke((MethodInvoker)(() => dataGridView.Rows.Insert(0,tag.Epc.ToString())));
+                        if(checkBeep.Checked)
+                            Console.Beep(500, 50); // Beep to indicate a new tag was found
+
                     }
                     this.Invoke((MethodInvoker)(() => rawListBox.Items.Insert(0, t)));
 
@@ -623,14 +580,7 @@ namespace RaceTimingForm
                 string newEpcHexString;
                 lock (lockObject)
                 {
-                    // make the Hex look like a decimal for timing system
-                    int value = Convert.ToInt32(newEPC, 16);
-
-                    // A simple sequential EPC. Real-world EPCs are more complex (GS1, etc.)
-                    // Ensure the new EPC has a valid length (e.g., 24 hex characters for 96-bit EPC)
-                    newEpcHexString = $"30000000000000000000{value:X12}";
-                    // Pad with leading zeros to make it 24 characters (96 bits) if needed.
-                    newEpcHexString = newEpcHexString.Substring(newEpcHexString.Length - 24);
+                    newEpcHexString = FormatEpcHexString(newEPC);
                 }
 
                 //Console.WriteLine($"Attempting to program tag {tag.Epc.ToHexString()} to new EPC: {newEpcHexString}...");
@@ -644,6 +594,13 @@ namespace RaceTimingForm
                     Console.WriteLine($"Error scheduling write for tag {origEPC}: {ex.Message}");
                 }
             }
+        }
+
+        private static string FormatEpcHexString(string newEPC)
+        {
+            int value = Convert.ToInt32(newEPC, 16);
+            string newEpcHexString = $"30000000000000000000{value:X12}";
+            return newEpcHexString.Substring(newEpcHexString.Length - 24);
         }
     }
     public class TagListBoxItem

@@ -14,7 +14,7 @@ namespace RaceTimingForm
         // Parse user input (e.g., "01:00:00" for 1 hour)
         private TimeSpan _offsetTime = TimeSpan.Zero; // This will store your "set" value or accumulated paused time
 
-        static ImpinjReader reader = new ImpinjReader();
+        static ImpinjReader reader = null;
         private readonly object _epcLock = new object();
         private static readonly object lockObject = new object();
         private static Dictionary<string, Tag> _firstSeenEpcs = new Dictionary<string, Tag>();
@@ -109,8 +109,7 @@ namespace RaceTimingForm
                                             ts.Seconds,
                                             ts.Milliseconds);
         }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void Disconnect()
         {
             // Don't call the Stop method if the
             // reader is already stopped.
@@ -122,12 +121,17 @@ namespace RaceTimingForm
                     // Disconnect from the reader.
                     reader.Disconnect();
                 }
-
+                connectButton.Enabled = true;
             }
             catch (Exception)
             {
                 throw;
             }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Disconnect();
 
             FileConsole.WriteLine("Application is closing. Shutting down FileFileConsole.");
             SaveResults();
@@ -207,6 +211,7 @@ namespace RaceTimingForm
         {
             try
             {
+                reader = new ImpinjReader();
                 string hostname = "SpeedwayR-16-50-19";
                 reader.Connect(hostname);
 
@@ -320,8 +325,7 @@ namespace RaceTimingForm
             resultslistBox.Items.Add(timeInputTextBox.Text + debugTextbox.Text);
             dataGridView.Rows.Add(debugTextbox.Text);
             if (checkBeep.Checked)
-                Console.Beep(500, 25); // Beep to indicate a new tag was found
-
+                Beep();
         }
 
         private void resultslistBox_KeyDown(object sender, KeyEventArgs e)
@@ -508,9 +512,8 @@ namespace RaceTimingForm
                         var item = new TagListBoxItem { DisplayText = timeInputTextBox.Text + "\t" + t, Tag = tag.Epc.ToString() };
                         this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(item)));
                         this.Invoke((MethodInvoker)(() => dataGridView.Rows.Insert(0,tag.Epc.ToString())));
-                        if(checkBeep.Checked)
-                            Console.Beep(500, 20); // Beep to indicate a new tag was found
-
+                        if (checkBeep.Checked)
+                            Beep();
                     }
                     this.Invoke((MethodInvoker)(() => rawListBox.Items.Insert(0, t)));
 
@@ -534,7 +537,7 @@ namespace RaceTimingForm
                         if (writeResult.Result == WriteResultStatus.Success)
                         {
                             Console.WriteLine($"  -> Tag {writeResult.Tag.Epc.ToHexString()} successfully programmed!");
-                            Console.Beep();
+                            Beep();
                         }
                         else
                         {
@@ -587,6 +590,11 @@ namespace RaceTimingForm
                     Console.WriteLine($"Error scheduling write for tag {origEPC}: {ex.Message}");
                 }
             }
+        }
+
+        private static void Beep()
+        {
+            Task.Run(() => Console.Beep(500, 100));
         }
 
         private static string FormatEpcHexString(string newEPC)

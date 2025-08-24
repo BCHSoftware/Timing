@@ -196,7 +196,7 @@ namespace RaceTimingForm
                 "Confirm Removal",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
-            
+
             if (confirmResult == DialogResult.Yes)
             {
                 resultslistBox.Items.Clear();
@@ -211,97 +211,17 @@ namespace RaceTimingForm
         {
             try
             {
-                reader = new ImpinjReader();
-                string hostname = "SpeedwayR-16-50-19";
-                reader.Connect(hostname);
-
-                // Get the default settings
-                // We'll use these as a starting point
-                // and then modify the settings we're 
-                // interested in.
-
-                Settings settings = reader.QueryDefaultSettings();
-
-                if (radioButton1.Checked)
+                if (reader == null)
                 {
-
-                    // Tell the reader to include the antenna number
-                    // in all tag reports. Other fields can be added
-                    // to the reports in the same way by setting the 
-                    // appropriate Report.IncludeXXXXXXX property.
-                    settings.Report.IncludeAntennaPortNumber = true;
-
-                    // The reader can be set into various modes in which reader
-                    // dynamics are optimized for specific regions and environments.
-                    // The following mode, AutoSetDenseReaderDeepScan (1002), monitors RF noise
-                    // and interference then automatically and continuously optimizes
-                    // the reader’s configuration
-                    settings.RfMode = 1002;
-                    settings.SearchMode = SearchMode.DualTarget;
-                    settings.Session = 2;
-
-                    // Disable all antennas.
-                    settings.Antennas.DisableAll();
-                    // Enable antenna #1. Disable all others.
-                    settings.Antennas.GetAntenna(1).IsEnabled = true;
-                    // Enable antenna #2. Disable all others.
-                    settings.Antennas.GetAntenna(2).IsEnabled = true;
-
-                    // Set the Transmit Power and 
-                    // You can also set them to specific values like this...
-                    settings.Antennas.GetAntenna(1).TxPowerInDbm = (double)numericPower.Value;
-                    settings.Antennas.GetAntenna(1).RxSensitivityInDbm = (double)numericSensitivity.Value;
-                    settings.Antennas.GetAntenna(2).TxPowerInDbm = (double)numericPower.Value;
-                    settings.Antennas.GetAntenna(2).RxSensitivityInDbm = (double)numericSensitivity.Value;
-                    settings.Report.IncludeFirstSeenTime = true;
-                    settings.Report.IncludeLastSeenTime = true;
-
-                    // Send a tag report for every tag read.
-                    settings.Report.Mode = ReportMode.Individual;
+                    reader = new ImpinjReader();
+                    string hostname = "SpeedwayR-16-50-19";
+                    reader.Connect(hostname);
                 }
-                if (radioButton2.Checked)
-                {
 
-                    settings.Report.IncludeAntennaPortNumber = true;
-                    settings.Report.IncludePeakRssi = true;
-                    settings.Report.IncludePcBits = true; // Essential for correct EPC writing
-                    settings.Report.IncludeFirstSeenTime = true;
-                    settings.Report.IncludeLastSeenTime = true;
+                updateSettings();
 
-                    // Set reader mode for good performance
-                    settings.ReaderMode = ReaderMode.AutoSetDenseReader;
-
-                    // Enable one antenna
-                    settings.Antennas.DisableAll();
-                    for (ushort i = 1; i <= 1; i++) // Let's program with only 1 (up to 4 antennas)
-                    {
-                        settings.Antennas.GetAntenna(i).IsEnabled = true;
-                        settings.Antennas.GetAntenna(i).TxPowerInDbm = 24; //  30 =Max power (adjust as needed)
-                        settings.Antennas.GetAntenna(i).RxSensitivityInDbm = -70; // Good sensitivity (adjust as needed)
-                    }
-                }
-                // Apply the newly modified settings.
-                reader.ApplySettings(settings);
-
-                // Assign the TagsReported event handler.
-                // This specifies which method to call
-                // when tags reports are available.
-                reader.TagsReported += OnTagsReported;
-                reader.TagOpComplete += OnTagOpComplete;
-
-
-                // Don't call the Start method if the
-                // reader is already running.
-                if (!reader.QueryStatus().IsSingulating)
-                {
-                    // Start reading.
-                    reader.Start();
-                }
                 startButton.Enabled = true;
                 connectButton.Enabled = false;
-                numericPower.Enabled = false;
-                numericSensitivity.Enabled = false;
-                debugTextbox.Visible = false;
                 addButton.Visible = false;
             }
             catch (OctaneSdkException e)
@@ -336,7 +256,7 @@ namespace RaceTimingForm
             if (e.Control && e.KeyCode == Keys.C)
             {
                 StringBuilder sb = new StringBuilder();
-               
+
                 foreach (object item in resultslistBox.Items)
                 {
                     sb.AppendLine(item.ToString());
@@ -511,7 +431,7 @@ namespace RaceTimingForm
 
                         var item = new TagListBoxItem { DisplayText = timeInputTextBox.Text + "\t" + t, Tag = tag.Epc.ToString() };
                         this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(item)));
-                        this.Invoke((MethodInvoker)(() => dataGridView.Rows.Insert(0,tag.Epc.ToString())));
+                        this.Invoke((MethodInvoker)(() => dataGridView.Rows.Insert(0, tag.Epc.ToString())));
                         if (checkBeep.Checked)
                             Beep();
                     }
@@ -567,7 +487,7 @@ namespace RaceTimingForm
         {
             int row = e.RowIndex;
             int col = e.ColumnIndex;
-            
+
             if (dataGridView.Rows[row].Cells[1].Value != null)
             {
                 String origEPC = dataGridView.Rows[row].Cells[0].Value.ToString();
@@ -603,7 +523,101 @@ namespace RaceTimingForm
             string newEpcHexString = $"30000000000000000000{value:X12}";
             return newEpcHexString.Substring(newEpcHexString.Length - 24);
         }
+
+        private void numericPower_ValueChanged(object sender, EventArgs e)
+        {
+            updateSettings();
+        }
+
+        private void numericSensitivity_ValueChanged(object sender, EventArgs e)
+        {
+            updateSettings();
+        }
+        private void updateSettings()
+        {
+
+            if (reader != null)
+            { 
+                // Get the default settings
+                Settings settings = reader.QueryDefaultSettings();
+
+                // Tell the reader to include the antenna number
+                settings.Report.IncludeAntennaPortNumber = true;
+
+                // The reader can be set into various modes in which reader
+                settings.RfMode = 1002;
+                settings.Session = 2;
+
+                // Disable all antennas.
+                settings.Antennas.DisableAll();
+                // Enable antenna #1. 
+                settings.Antennas.GetAntenna(1).IsEnabled = checkBox1.Checked;
+                // Enable antenna #2. 
+                settings.Antennas.GetAntenna(2).IsEnabled = checkBox2.Checked;
+
+                // Set the Transmit Power and 
+                // You can also set them to specific values like this...
+                settings.Antennas.GetAntenna(1).TxPowerInDbm = (double)numericPower.Value;
+                settings.Antennas.GetAntenna(1).RxSensitivityInDbm = (double)numericSensitivity.Value;
+                settings.Antennas.GetAntenna(2).TxPowerInDbm = (double)numericPower.Value;
+                settings.Antennas.GetAntenna(2).RxSensitivityInDbm = (double)numericSensitivity.Value;
+                settings.Report.IncludeFirstSeenTime = true;
+                settings.Report.IncludeLastSeenTime = true;
+                settings.Report.IncludePeakRssi = true;
+                settings.Report.IncludePcBits = true; // Essential for correct EPC writing
+
+                // Send a tag report depending on usage.
+                if (radioButton1.Checked) // for races
+                {
+                    settings.SearchMode = SearchMode.SingleTarget;
+                    settings.Report.Mode = ReportMode.Individual;
+                }
+                else
+                {
+                    // Set reader mode for good performance
+                    settings.ReaderMode = ReaderMode.AutoSetDenseReader;
+                    settings.SearchMode = SearchMode.DualTarget;
+                }
+                // Apply the newly modified settings.
+                reader.ApplySettings(settings);
+
+
+
+                // Don't call the Start method if the
+                // reader is already running.
+                if (!reader.QueryStatus().IsSingulating)
+                {
+                    // Assign the event handlers.
+                    // This specifies which method to call
+                    // when tags reports are available.
+                    reader.TagsReported += OnTagsReported;
+                    reader.TagOpComplete += OnTagOpComplete;
+
+                    // Start reading.
+                    reader.Start();
+                }
+
+            }
+
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            numericPower.Value = 24;
+            numericSensitivity.Value = -80;
+            checkBox1.Checked = true;
+            checkBox2.Checked = true;
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            numericPower.Value = 24;
+            numericSensitivity.Value = -70;
+            checkBox1.Checked = true;
+            checkBox2.Checked = false;
+        }
     }
+
     public class TagListBoxItem
     {
         public required string DisplayText { get; set; }

@@ -44,6 +44,8 @@
             stopButton = new Button();
             startButton = new Button();
             tabConfigure = new TabPage();
+            checkBox2 = new CheckBox();
+            checkBox1 = new CheckBox();
             checkBeep = new CheckBox();
             rawListBox = new ListBox();
             radioButton2 = new RadioButton();
@@ -77,10 +79,10 @@
             // 
             errorLabel.Font = new Font("Microsoft Sans Serif", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
             errorLabel.ForeColor = Color.Red;
-            errorLabel.Location = new Point(10, 296);
+            errorLabel.Location = new Point(10, 185);
             errorLabel.Margin = new Padding(2, 0, 2, 0);
             errorLabel.Name = "errorLabel";
-            errorLabel.Size = new Size(711, 41);
+            errorLabel.Size = new Size(257, 271);
             errorLabel.TabIndex = 4;
             // 
             // listBoxContextMenu
@@ -219,6 +221,8 @@
             // 
             // tabConfigure
             // 
+            tabConfigure.Controls.Add(checkBox2);
+            tabConfigure.Controls.Add(checkBox1);
             tabConfigure.Controls.Add(checkBeep);
             tabConfigure.Controls.Add(rawListBox);
             tabConfigure.Controls.Add(radioButton2);
@@ -240,6 +244,30 @@
             tabConfigure.TabIndex = 1;
             tabConfigure.Text = "Configure";
             tabConfigure.UseVisualStyleBackColor = true;
+            // 
+            // checkBox2
+            // 
+            checkBox2.AutoSize = true;
+            checkBox2.Checked = true;
+            checkBox2.CheckState = CheckState.Checked;
+            checkBox2.Location = new Point(169, 92);
+            checkBox2.Name = "checkBox2";
+            checkBox2.Size = new Size(66, 25);
+            checkBox2.TabIndex = 35;
+            checkBox2.Text = "Ant 2";
+            checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Checked = true;
+            checkBox1.CheckState = CheckState.Checked;
+            checkBox1.Location = new Point(169, 61);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(66, 25);
+            checkBox1.TabIndex = 34;
+            checkBox1.Text = "Ant 1";
+            checkBox1.UseVisualStyleBackColor = true;
             // 
             // checkBeep
             // 
@@ -272,6 +300,7 @@
             radioButton2.TabIndex = 32;
             radioButton2.Text = "Program Bibs";
             radioButton2.UseVisualStyleBackColor = true;
+            radioButton2.CheckedChanged += radioButton2_CheckedChanged;
             // 
             // radioButton1
             // 
@@ -284,6 +313,7 @@
             radioButton1.TabStop = true;
             radioButton1.Text = "Race";
             radioButton1.UseVisualStyleBackColor = true;
+            radioButton1.CheckedChanged += radioButton1_CheckedChanged;
             // 
             // buttonWrite
             // 
@@ -357,18 +387,20 @@
             numericSensitivity.Size = new Size(49, 29);
             numericSensitivity.TabIndex = 26;
             numericSensitivity.Value = new decimal(new int[] { 80, 0, 0, int.MinValue });
+            numericSensitivity.ValueChanged += numericSensitivity_ValueChanged;
             // 
             // numericPower
             // 
             numericPower.Increment = new decimal(new int[] { 2, 0, 0, 0 });
             numericPower.Location = new Point(104, 20);
             numericPower.Margin = new Padding(2);
-            numericPower.Maximum = new decimal(new int[] { 40, 0, 0, 0 });
-            numericPower.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
+            numericPower.Maximum = new decimal(new int[] { 32, 0, 0, 0 });
+            numericPower.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
             numericPower.Name = "numericPower";
             numericPower.Size = new Size(54, 29);
             numericPower.TabIndex = 25;
             numericPower.Value = new decimal(new int[] { 18, 0, 0, 0 });
+            numericPower.ValueChanged += numericPower_ValueChanged;
             // 
             // label2
             // 
@@ -406,8 +438,8 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(758, 482);
-            Controls.Add(tabControl1);
             Controls.Add(errorLabel);
+            Controls.Add(tabControl1);
             Margin = new Padding(2);
             Name = "Form1";
             Text = "Race Timer";
@@ -455,5 +487,7 @@
         private DataGridViewTextBoxColumn colTag;
         private DataGridViewTextBoxColumn colNumber;
         private CheckBox checkBeep;
+        private CheckBox checkBox2;
+        private CheckBox checkBox1;
     }
 }

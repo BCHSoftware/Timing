@@ -61,6 +61,7 @@
             label2 = new Label();
             label1 = new Label();
             connectButton = new Button();
+            button2 = new Button();
             listBoxContextMenu.SuspendLayout();
             tabControl1.SuspendLayout();
             tabRace.SuspendLayout();
@@ -221,6 +222,7 @@
             // 
             // tabConfigure
             // 
+            tabConfigure.Controls.Add(button2);
             tabConfigure.Controls.Add(checkBox2);
             tabConfigure.Controls.Add(checkBox1);
             tabConfigure.Controls.Add(checkBeep);
@@ -433,6 +435,15 @@
             connectButton.UseVisualStyleBackColor = true;
             connectButton.Click += connectButton_Click;
             // 
+            // button2
+            // 
+            button2.Location = new Point(178, 123);
+            button2.Name = "button2";
+            button2.Size = new Size(75, 32);
+            button2.TabIndex = 36;
+            button2.Text = "Clear";
+            button2.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -489,5 +500,6 @@
         private CheckBox checkBeep;
         private CheckBox checkBox2;
         private CheckBox checkBox1;
+        private Button button2;
     }
 }

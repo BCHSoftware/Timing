@@ -431,11 +431,25 @@ namespace RaceTimingForm
 
                         var item = new TagListBoxItem { DisplayText = timeInputTextBox.Text + "\t" + t, Tag = tag.Epc.ToString() };
                         this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(item)));
-                        this.Invoke((MethodInvoker)(() => dataGridView.Rows.Insert(0, tag.Epc.ToString())));
-                        if (checkBeep.Checked)
+                        if (radioButton2.Checked)
+                        {
+                            this.Invoke((MethodInvoker)(() => dataGridView.Rows.Insert(0, tag.Epc.ToString())));
+                            this.Invoke((MethodInvoker)(() => dataGridView.ClearSelection()));
+                            this.Invoke((MethodInvoker)(() => dataGridView.Rows[0].Selected = true));
+                            this.Invoke((MethodInvoker)(() => dataGridView.CurrentCell = dataGridView.Rows[0].Cells[1]));
+                        }
+
+   ;                   if (checkBeep.Checked)
                             Beep();
                     }
-                    this.Invoke((MethodInvoker)(() => rawListBox.Items.Insert(0, t)));
+                    try
+                    {
+                        this.Invoke((MethodInvoker)(() => rawListBox.Items.Insert(0, t)));
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Exception adding to listbox");
+                    }
 
                     FileConsole.WriteLine("{0}, {1}, {2}, {3}",
                                             tag.Epc,
@@ -537,7 +551,7 @@ namespace RaceTimingForm
         {
 
             if (reader != null)
-            { 
+            {
                 // Get the default settings
                 Settings settings = reader.QueryDefaultSettings();
 

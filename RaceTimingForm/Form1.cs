@@ -430,7 +430,7 @@ namespace RaceTimingForm
                         _firstSeenEpcs[tag.Epc.ToString()] = tag;
 
                         var item = new TagListBoxItem { DisplayText = timeInputTextBox.Text + "\t" + t, Tag = tag.Epc.ToString() };
-                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Add(item)));
+                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Insert(0,item)));
                         if (radioButton2.Checked)
                         {
                             this.Invoke((MethodInvoker)(() => dataGridView.Rows.Insert(0, tag.Epc.ToString())));

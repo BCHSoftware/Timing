@@ -242,7 +242,7 @@ namespace RaceTimingForm
         private void addButton_Click(object sender, EventArgs e)
         {
             startButton.Enabled = true;
-            resultslistBox.Items.Add(timeInputTextBox.Text + debugTextbox.Text);
+            resultslistBox.Items.Add(timeInputTextBox.Text + "    " + debugTextbox.Text);
             dataGridView.Rows.Add(debugTextbox.Text);
             if (checkBeep.Checked)
                 Beep();
@@ -429,8 +429,8 @@ namespace RaceTimingForm
                     {
                         _firstSeenEpcs[tag.Epc.ToString()] = tag;
 
-                        var item = new TagListBoxItem { DisplayText = timeInputTextBox.Text + "\t" + t, Tag = tag.Epc.ToString() };
-                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Insert(0,item)));
+                        var item = new TagListBoxItem { DisplayText = timeInputTextBox.Text + "/t" + t, Tag = tag.Epc.ToString() };
+                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Insert(0, item)));
                         if (radioButton2.Checked)
                         {
                             this.Invoke((MethodInvoker)(() => dataGridView.Rows.Insert(0, tag.Epc.ToString())));
@@ -439,7 +439,7 @@ namespace RaceTimingForm
                             this.Invoke((MethodInvoker)(() => dataGridView.CurrentCell = dataGridView.Rows[0].Cells[1]));
                         }
 
-   ;                   if (checkBeep.Checked)
+   ; if (checkBeep.Checked)
                             Beep();
                     }
                     try
@@ -629,6 +629,11 @@ namespace RaceTimingForm
             numericSensitivity.Value = -70;
             checkBox1.Checked = true;
             checkBox2.Checked = false;
+        }
+
+        private void resultslistBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 

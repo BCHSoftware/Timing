@@ -36,12 +36,19 @@
             clearAllToolStripMenuItem = new ToolStripMenuItem();
             tabControl1 = new TabControl();
             tabRace = new TabPage();
+<<<<<<< Updated upstream
             resultsdataGrid = new DataGridView();
             timeCol = new DataGridViewTextBoxColumn();
             tagCol = new DataGridViewTextBoxColumn();
             debugTextbox = new TextBox();
             addButton = new Button();
             timeInputTextBox = new TextBox();
+=======
+            debugTextbox = new TextBox();
+            addButton = new Button();
+            timeInputTextBox = new TextBox();
+            resultslistBox = new ListBox();
+>>>>>>> Stashed changes
             resetButton = new Button();
             stopButton = new Button();
             startButton = new Button();
@@ -64,14 +71,25 @@
             label2 = new Label();
             label1 = new Label();
             connectButton = new Button();
+<<<<<<< Updated upstream
             listBoxContextMenu.SuspendLayout();
             tabControl1.SuspendLayout();
             tabRace.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)resultsdataGrid).BeginInit();
+=======
+            dataGridView1 = new DataGridView();
+            listBoxContextMenu.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabRace.SuspendLayout();
+>>>>>>> Stashed changes
             tabConfigure.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericSensitivity).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericPower).BeginInit();
+<<<<<<< Updated upstream
+=======
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+>>>>>>> Stashed changes
             SuspendLayout();
             // 
             // updateTimer
@@ -124,10 +142,18 @@
             // 
             // tabRace
             // 
+<<<<<<< Updated upstream
             tabRace.Controls.Add(resultsdataGrid);
             tabRace.Controls.Add(debugTextbox);
             tabRace.Controls.Add(addButton);
             tabRace.Controls.Add(timeInputTextBox);
+=======
+            tabRace.Controls.Add(dataGridView1);
+            tabRace.Controls.Add(debugTextbox);
+            tabRace.Controls.Add(addButton);
+            tabRace.Controls.Add(timeInputTextBox);
+            tabRace.Controls.Add(resultslistBox);
+>>>>>>> Stashed changes
             tabRace.Controls.Add(resetButton);
             tabRace.Controls.Add(stopButton);
             tabRace.Controls.Add(startButton);
@@ -141,6 +167,7 @@
             tabRace.Text = "Race";
             tabRace.UseVisualStyleBackColor = true;
             // 
+<<<<<<< Updated upstream
             // resultsdataGrid
             // 
             resultsdataGrid.AllowUserToAddRows = false;
@@ -166,6 +193,8 @@
             tagCol.Name = "tagCol";
             tagCol.Width = 125;
             // 
+=======
+>>>>>>> Stashed changes
             // debugTextbox
             // 
             debugTextbox.Location = new Point(469, 477);
@@ -195,6 +224,23 @@
             timeInputTextBox.TabIndex = 16;
             timeInputTextBox.Text = "MM:SS";
             // 
+<<<<<<< Updated upstream
+=======
+            // resultslistBox
+            // 
+            resultslistBox.ContextMenuStrip = listBoxContextMenu;
+            resultslistBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            resultslistBox.FormattingEnabled = true;
+            resultslistBox.ItemHeight = 28;
+            resultslistBox.Location = new Point(469, 7);
+            resultslistBox.Margin = new Padding(2, 3, 2, 3);
+            resultslistBox.Name = "resultslistBox";
+            resultslistBox.SelectionMode = SelectionMode.None;
+            resultslistBox.Size = new Size(331, 452);
+            resultslistBox.TabIndex = 15;
+            resultslistBox.KeyDown += resultslistBox_KeyDown;
+            // 
+>>>>>>> Stashed changes
             // resetButton
             // 
             resetButton.Enabled = false;
@@ -223,6 +269,10 @@
             // 
             // startButton
             // 
+<<<<<<< Updated upstream
+=======
+            startButton.Enabled = false;
+>>>>>>> Stashed changes
             startButton.Font = new Font("Segoe UI", 12F);
             startButton.Location = new Point(105, 81);
             startButton.Margin = new Padding(2, 3, 2, 3);
@@ -462,6 +512,18 @@
             connectButton.UseVisualStyleBackColor = true;
             connectButton.Click += connectButton_Click;
             // 
+<<<<<<< Updated upstream
+=======
+            // dataGridView1
+            // 
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Location = new Point(294, 250);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.RowHeadersWidth = 51;
+            dataGridView1.Size = new Size(170, 188);
+            dataGridView1.TabIndex = 24;
+            // 
+>>>>>>> Stashed changes
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -477,12 +539,19 @@
             tabControl1.ResumeLayout(false);
             tabRace.ResumeLayout(false);
             tabRace.PerformLayout();
+<<<<<<< Updated upstream
             ((System.ComponentModel.ISupportInitialize)resultsdataGrid).EndInit();
+=======
+>>>>>>> Stashed changes
             tabConfigure.ResumeLayout(false);
             tabConfigure.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericSensitivity).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericPower).EndInit();
+<<<<<<< Updated upstream
+=======
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+>>>>>>> Stashed changes
             ResumeLayout(false);
         }
 
@@ -519,8 +588,12 @@
         private CheckBox checkBox2;
         private CheckBox checkBox1;
         private Button button2;
+<<<<<<< Updated upstream
         private DataGridView resultsdataGrid;
         private DataGridViewTextBoxColumn timeCol;
         private DataGridViewTextBoxColumn tagCol;
+=======
+        private DataGridView dataGridView1;
+>>>>>>> Stashed changes
     }
 }

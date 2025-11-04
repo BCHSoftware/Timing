@@ -1,4 +1,4 @@
-﻿namespace RaceTimingForm
+namespace RaceTimingForm
 {
     partial class Form1
     {
@@ -36,10 +36,12 @@
             clearAllToolStripMenuItem = new ToolStripMenuItem();
             tabControl1 = new TabControl();
             tabRace = new TabPage();
+            resultsdataGrid = new DataGridView();
+            timeCol = new DataGridViewTextBoxColumn();
+            tagCol = new DataGridViewTextBoxColumn();
             debugTextbox = new TextBox();
             addButton = new Button();
             timeInputTextBox = new TextBox();
-            resultslistBox = new ListBox();
             resetButton = new Button();
             stopButton = new Button();
             startButton = new Button();
@@ -65,6 +67,7 @@
             listBoxContextMenu.SuspendLayout();
             tabControl1.SuspendLayout();
             tabRace.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)resultsdataGrid).BeginInit();
             tabConfigure.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericSensitivity).BeginInit();
@@ -121,10 +124,10 @@
             // 
             // tabRace
             // 
+            tabRace.Controls.Add(resultsdataGrid);
             tabRace.Controls.Add(debugTextbox);
             tabRace.Controls.Add(addButton);
             tabRace.Controls.Add(timeInputTextBox);
-            tabRace.Controls.Add(resultslistBox);
             tabRace.Controls.Add(resetButton);
             tabRace.Controls.Add(stopButton);
             tabRace.Controls.Add(startButton);
@@ -137,6 +140,31 @@
             tabRace.TabIndex = 0;
             tabRace.Text = "Race";
             tabRace.UseVisualStyleBackColor = true;
+            // 
+            // resultsdataGrid
+            // 
+            resultsdataGrid.AllowUserToAddRows = false;
+            resultsdataGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            resultsdataGrid.Columns.AddRange(new DataGridViewColumn[] { timeCol, tagCol });
+            resultsdataGrid.Location = new Point(469, 21);
+            resultsdataGrid.Name = "resultsdataGrid";
+            resultsdataGrid.RowHeadersWidth = 51;
+            resultsdataGrid.Size = new Size(331, 438);
+            resultsdataGrid.TabIndex = 25;
+            // 
+            // timeCol
+            // 
+            timeCol.HeaderText = "Time";
+            timeCol.MinimumWidth = 6;
+            timeCol.Name = "timeCol";
+            timeCol.Width = 125;
+            // 
+            // tagCol
+            // 
+            tagCol.HeaderText = "Tag";
+            tagCol.MinimumWidth = 6;
+            tagCol.Name = "tagCol";
+            tagCol.Width = 125;
             // 
             // debugTextbox
             // 
@@ -166,21 +194,6 @@
             timeInputTextBox.Size = new Size(297, 54);
             timeInputTextBox.TabIndex = 16;
             timeInputTextBox.Text = "MM:SS";
-            // 
-            // resultslistBox
-            // 
-            resultslistBox.ContextMenuStrip = listBoxContextMenu;
-            resultslistBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            resultslistBox.FormattingEnabled = true;
-            resultslistBox.ItemHeight = 28;
-            resultslistBox.Location = new Point(469, 7);
-            resultslistBox.Margin = new Padding(2, 3, 2, 3);
-            resultslistBox.Name = "resultslistBox";
-            resultslistBox.SelectionMode = SelectionMode.None;
-            resultslistBox.Size = new Size(331, 452);
-            resultslistBox.TabIndex = 15;
-            resultslistBox.SelectedIndexChanged += resultslistBox_SelectedIndexChanged;
-            resultslistBox.KeyDown += resultslistBox_KeyDown;
             // 
             // resetButton
             // 
@@ -464,6 +477,7 @@
             tabControl1.ResumeLayout(false);
             tabRace.ResumeLayout(false);
             tabRace.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)resultsdataGrid).EndInit();
             tabConfigure.ResumeLayout(false);
             tabConfigure.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView).EndInit();
@@ -484,7 +498,6 @@
         private TextBox debugTextbox;
         private Button addButton;
         private TextBox timeInputTextBox;
-        private ListBox resultslistBox;
         private Button resetButton;
         private Button stopButton;
         private Button startButton;
@@ -506,5 +519,8 @@
         private CheckBox checkBox2;
         private CheckBox checkBox1;
         private Button button2;
+        private DataGridView resultsdataGrid;
+        private DataGridViewTextBoxColumn timeCol;
+        private DataGridViewTextBoxColumn tagCol;
     }
 }

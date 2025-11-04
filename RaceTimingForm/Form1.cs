@@ -115,7 +115,7 @@ namespace RaceTimingForm
             // reader is already stopped.
             try
             {
-                if (reader.IsConnected && reader.QueryStatus().IsSingulating)
+                if (reader != null && reader.IsConnected && reader.QueryStatus().IsSingulating)
                 {
                     reader.Stop();
                     // Disconnect from the reader.
@@ -142,21 +142,23 @@ namespace RaceTimingForm
             string fPath = "results_" + timestamp + ".txt";
             using (StreamWriter sw = new StreamWriter(fPath))
             {
-                foreach (object item in resultslistBox.Items)
+                foreach (DataGridViewRow row in resultsdataGrid.Rows)
                 {
-                    sw.WriteLine(item.ToString());
+                    if (!row.IsNewRow)
+                    {
+                        sw.WriteLine(string.Join("\t", row.Cells.Cast<DataGridViewCell>().Select(cell => cell.Value?.ToString() ?? "")));
+                    }
                 }
             }
         }
 
         private void removeTagToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (resultslistBox.SelectedItems.Count > 0)
+            if (resultsdataGrid.SelectedRows.Count > 0)
             {
-                List<object> itemsToRemove = new List<object>(resultslistBox.SelectedItems.Cast<object>());
-                string confirmationMessage = itemsToRemove.Count == 1
-                    ? $"Are you sure you want to remove '{itemsToRemove[0]}'?"
-                    : $"Are you sure you want to remove {itemsToRemove.Count} selected items?";
+                string confirmationMessage = resultsdataGrid.SelectedRows.Count == 1
+                    ? $"Are you sure you want to remove the selected row?"
+                    : $"Are you sure you want to remove {resultsdataGrid.SelectedRows.Count} selected rows?";
 
                 DialogResult confirmResult = MessageBox.Show(
                     confirmationMessage,
@@ -166,19 +168,15 @@ namespace RaceTimingForm
 
                 if (confirmResult == DialogResult.Yes)
                 {
-                    RemoveSelectedItemsFromListBox(resultslistBox);
-                    MessageBox.Show($"{itemsToRemove.Count} item(s) removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    foreach (DataGridViewRow row in resultsdataGrid.SelectedRows)
+                    {
+                        if (!row.IsNewRow)
+                        {
+                            resultsdataGrid.Rows.Remove(row);
+                        }
+                    }
+                    MessageBox.Show($"{resultsdataGrid.SelectedRows.Count} row(s) removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-            }
-        }
-        private void RemoveSelectedItemsFromListBox(ListBox listBox)
-        {
-            List<object> itemsToRemove = new List<object>(listBox.SelectedItems.Cast<object>());
-            foreach (object item in itemsToRemove)
-            {
-                listBox.Items.Remove(item);
-                if (item is TagListBoxItem i && _firstSeenEpcs.ContainsKey(i.Tag))
-                    _ = _firstSeenEpcs.Remove(i.Tag);
             }
         }
 
@@ -186,11 +184,8 @@ namespace RaceTimingForm
         {
             SaveResults();
 
-            // Prepare the confirmation message
-            string confirmationMessage;
-            confirmationMessage = $"Are you sure you want to remove {resultslistBox.Items.Count} items?";
+            string confirmationMessage = $"Are you sure you want to remove all rows?";
 
-            // Display a confirmation message before removing
             DialogResult confirmResult = MessageBox.Show(
                 confirmationMessage,
                 "Confirm Removal",
@@ -199,11 +194,11 @@ namespace RaceTimingForm
 
             if (confirmResult == DialogResult.Yes)
             {
-                resultslistBox.Items.Clear();
+                resultsdataGrid.Rows.Clear();
                 _firstSeenEpcs.Clear();
                 dataGridView.Rows.Clear();
 
-                MessageBox.Show($"All items removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"All rows removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -242,8 +237,11 @@ namespace RaceTimingForm
         private void addButton_Click(object sender, EventArgs e)
         {
             startButton.Enabled = true;
-            resultslistBox.Items.Add(timeInputTextBox.Text + "    " + debugTextbox.Text);
-            dataGridView.Rows.Add(debugTextbox.Text);
+
+            resultsdataGrid.Rows.Add(timeInputTextBox.Text, debugTextbox.Text);
+
+            // resultslistBox.Items.Add(timeInputTextBox.Text + "    " + debugTextbox.Text);
+            //dataGridView.Rows.Add(debugTextbox.Text);
             if (checkBeep.Checked)
                 Beep();
         }
@@ -257,7 +255,7 @@ namespace RaceTimingForm
             {
                 StringBuilder sb = new StringBuilder();
 
-                foreach (object item in resultslistBox.Items)
+                foreach (object item in resultsdataGrid.Rows)
                 {
                     sb.AppendLine(item.ToString());
                 }
@@ -430,7 +428,7 @@ namespace RaceTimingForm
                         _firstSeenEpcs[tag.Epc.ToString()] = tag;
 
                         var item = new TagListBoxItem { DisplayText = timeInputTextBox.Text + "/t" + t, Tag = tag.Epc.ToString() };
-                        this.Invoke((MethodInvoker)(() => resultslistBox.Items.Insert(0, item)));
+                        resultsdataGrid.Rows.Add(timeInputTextBox.Text, t);
                         if (radioButton2.Checked)
                         {
                             this.Invoke((MethodInvoker)(() => dataGridView.Rows.Insert(0, tag.Epc.ToString())));
@@ -632,6 +630,16 @@ namespace RaceTimingForm
         }
 
         private void resultslistBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void resultsdataGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void rawListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }

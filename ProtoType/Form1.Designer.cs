@@ -28,13 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.MGlabel = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // MGlabel
+            // 
+            this.MGlabel.AutoSize = true;
+            this.MGlabel.Location = new System.Drawing.Point(211, 144);
+            this.MGlabel.Name = "MGlabel";
+            this.MGlabel.Size = new System.Drawing.Size(62, 16);
+            this.MGlabel.TabIndex = 0;
+            this.MGlabel.Text = "Massimo";
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.MGlabel);
+            this.Name = "Form1";
             this.Text = "Form1";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Label MGlabel;
     }
 }
 

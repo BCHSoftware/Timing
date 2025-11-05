@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             this.ESlabel = new System.Windows.Forms.Label();
+            this.MElabel = new System.Windows.Forms.Label();
+            this.DMlabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ESlabel
             // 
             this.ESlabel.AutoSize = true;
-            this.ESlabel.Location = new System.Drawing.Point(29, 17);
+            this.ESlabel.Location = new System.Drawing.Point(164, 25);
             this.ESlabel.Name = "ESlabel";
             this.ESlabel.Size = new System.Drawing.Size(93, 16);
             this.ESlabel.TabIndex = 0;
             this.ESlabel.Text = "ethan schaulat";
-            this.MElabel = new System.Windows.Forms.Label();
-            this.SuspendLayout();
             // 
             // MElabel
             // 
@@ -51,11 +51,21 @@
             this.MElabel.TabIndex = 0;
             this.MElabel.Text = "Michael Edwards";
             // 
+            // DMlabel
+            // 
+            this.DMlabel.AutoSize = true;
+            this.DMlabel.Location = new System.Drawing.Point(312, 25);
+            this.DMlabel.Name = "DMlabel";
+            this.DMlabel.Size = new System.Drawing.Size(112, 16);
+            this.DMlabel.TabIndex = 1;
+            this.DMlabel.Text = "Dean Maldonado";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.DMlabel);
             this.Controls.Add(this.ESlabel);
             this.Controls.Add(this.MElabel);
             this.Name = "Form1";
@@ -69,6 +79,7 @@
 
         private System.Windows.Forms.Label ESlabel;
         private System.Windows.Forms.Label MElabel;
+        private System.Windows.Forms.Label DMlabel;
     }
 }
 

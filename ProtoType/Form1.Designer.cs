@@ -28,13 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.MElabel = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // MElabel
+            // 
+            this.MElabel.AutoSize = true;
+            this.MElabel.Location = new System.Drawing.Point(12, 25);
+            this.MElabel.Name = "MElabel";
+            this.MElabel.Size = new System.Drawing.Size(110, 16);
+            this.MElabel.TabIndex = 0;
+            this.MElabel.Text = "Michael Edwards";
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.MElabel);
+            this.Name = "Form1";
             this.Text = "Form1";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Label MElabel;
     }
 }
 

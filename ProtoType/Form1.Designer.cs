@@ -28,6 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.ESlabel = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // ESlabel
+            // 
+            this.ESlabel.AutoSize = true;
+            this.ESlabel.Location = new System.Drawing.Point(29, 17);
+            this.ESlabel.Name = "ESlabel";
+            this.ESlabel.Size = new System.Drawing.Size(93, 16);
+            this.ESlabel.TabIndex = 0;
+            this.ESlabel.Text = "ethan schaulat";
             this.MElabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -45,6 +56,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.ESlabel);
             this.Controls.Add(this.MElabel);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -55,6 +67,7 @@
 
         #endregion
 
+        private System.Windows.Forms.Label ESlabel;
         private System.Windows.Forms.Label MElabel;
     }
 }

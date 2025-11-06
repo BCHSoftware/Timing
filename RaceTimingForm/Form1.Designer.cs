@@ -64,6 +64,7 @@
             label2 = new Label();
             label1 = new Label();
             connectButton = new Button();
+            MELabel = new Label();
             listBoxContextMenu.SuspendLayout();
             tabControl1.SuspendLayout();
             tabRace.SuspendLayout();
@@ -124,6 +125,7 @@
             // 
             // tabRace
             // 
+            tabRace.Controls.Add(MELabel);
             tabRace.Controls.Add(resultsdataGrid);
             tabRace.Controls.Add(debugTextbox);
             tabRace.Controls.Add(addButton);
@@ -462,6 +464,15 @@
             connectButton.UseVisualStyleBackColor = true;
             connectButton.Click += connectButton_Click;
             // 
+            // MELabel
+            // 
+            MELabel.AutoSize = true;
+            MELabel.Location = new Point(347, 181);
+            MELabel.Name = "MELabel";
+            MELabel.Size = new Size(65, 28);
+            MELabel.TabIndex = 26;
+            MELabel.Text = "label3";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -522,5 +533,6 @@
         private DataGridView resultsdataGrid;
         private DataGridViewTextBoxColumn timeCol;
         private DataGridViewTextBoxColumn tagCol;
+        private Label MELabel;
     }
 }

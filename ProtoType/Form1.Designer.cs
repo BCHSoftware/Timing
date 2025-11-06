@@ -28,6 +28,7 @@ namespace ProtoType
         /// </summary>
         private void InitializeComponent()
         {
+<<<<<<< Updated upstream
             this.ESlabel = new System.Windows.Forms.Label();
             this.MElabel = new System.Windows.Forms.Label();
             this.DMlabel = new System.Windows.Forms.Label();
@@ -69,16 +70,33 @@ namespace ProtoType
             this.MGlabel.Size = new System.Drawing.Size(119, 16);
             this.MGlabel.TabIndex = 2;
             this.MGlabel.Text = "Massimo Guagenti";
+=======
+            this.JDMlabel = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // JDMlabel
+            // 
+            this.JDMlabel.AutoSize = true;
+            this.JDMlabel.Location = new System.Drawing.Point(519, 100);
+            this.JDMlabel.Name = "JDMlabel";
+            this.JDMlabel.Size = new System.Drawing.Size(98, 16);
+            this.JDMlabel.TabIndex = 0;
+            this.JDMlabel.Text = "John D. Matzke";
+>>>>>>> Stashed changes
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+<<<<<<< Updated upstream
             this.Controls.Add(this.MGlabel);
             this.Controls.Add(this.DMlabel);
             this.Controls.Add(this.ESlabel);
             this.Controls.Add(this.MElabel);
+=======
+            this.Controls.Add(this.JDMlabel);
+>>>>>>> Stashed changes
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -88,10 +106,14 @@ namespace ProtoType
 
         #endregion
 
+<<<<<<< Updated upstream
         private System.Windows.Forms.Label ESlabel;
         private System.Windows.Forms.Label MElabel;
         private System.Windows.Forms.Label DMlabel;
         private System.Windows.Forms.Label MGlabel;
+=======
+        private System.Windows.Forms.Label JDMlabel;
+>>>>>>> Stashed changes
     }
 }
 

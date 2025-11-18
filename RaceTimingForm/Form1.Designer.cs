@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 namespace RaceTimingForm
 {
     partial class Form1
@@ -27,6 +28,37 @@ namespace RaceTimingForm
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
+=======
+﻿namespace RaceTimingForm
+{
+    partial class Form1
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+>>>>>>> main
         {
             components = new System.ComponentModel.Container();
             updateTimer = new System.Windows.Forms.Timer(components);
@@ -64,6 +96,7 @@ namespace RaceTimingForm
             label2 = new Label();
             label1 = new Label();
             connectButton = new Button();
+            MELabel = new Label();
             listBoxContextMenu.SuspendLayout();
             tabControl1.SuspendLayout();
             tabRace.SuspendLayout();
@@ -124,6 +157,7 @@ namespace RaceTimingForm
             // 
             // tabRace
             // 
+            tabRace.Controls.Add(MELabel);
             tabRace.Controls.Add(resultsdataGrid);
             tabRace.Controls.Add(debugTextbox);
             tabRace.Controls.Add(addButton);
@@ -462,6 +496,15 @@ namespace RaceTimingForm
             connectButton.UseVisualStyleBackColor = true;
             connectButton.Click += connectButton_Click;
             // 
+            // MELabel
+            // 
+            MELabel.AutoSize = true;
+            MELabel.Location = new Point(347, 181);
+            MELabel.Name = "MELabel";
+            MELabel.Size = new Size(65, 28);
+            MELabel.TabIndex = 26;
+            MELabel.Text = "label3";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -522,5 +565,6 @@ namespace RaceTimingForm
         private DataGridView resultsdataGrid;
         private DataGridViewTextBoxColumn timeCol;
         private DataGridViewTextBoxColumn tagCol;
+        private Label MELabel;
     }
 }

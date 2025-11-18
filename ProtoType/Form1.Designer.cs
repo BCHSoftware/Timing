@@ -32,6 +32,7 @@ namespace ProtoType
             this.MElabel = new System.Windows.Forms.Label();
             this.DMlabel = new System.Windows.Forms.Label();
             this.MGlabel = new System.Windows.Forms.Label();
+            this.jdmlabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ESlabel
@@ -70,11 +71,21 @@ namespace ProtoType
             this.MGlabel.TabIndex = 2;
             this.MGlabel.Text = "Massimo Guagenti";
             // 
+            // jdmlabel
+            // 
+            this.jdmlabel.AutoSize = true;
+            this.jdmlabel.Location = new System.Drawing.Point(654, 25);
+            this.jdmlabel.Name = "jdmlabel";
+            this.jdmlabel.Size = new System.Drawing.Size(93, 16);
+            this.jdmlabel.TabIndex = 3;
+            this.jdmlabel.Text = "John d Matzke";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.jdmlabel);
             this.Controls.Add(this.MGlabel);
             this.Controls.Add(this.DMlabel);
             this.Controls.Add(this.ESlabel);
@@ -88,10 +99,15 @@ namespace ProtoType
 
         #endregion
 
+<<<<<<< Updated upstream
         private System.Windows.Forms.Label ESlabel;
         private System.Windows.Forms.Label MElabel;
         private System.Windows.Forms.Label DMlabel;
         private System.Windows.Forms.Label MGlabel;
+        private System.Windows.Forms.Label jdmlabel;
+=======
+        private System.Windows.Forms.Label JDMlabel;
+>>>>>>> Stashed changes
     }
 }
 

@@ -33,6 +33,7 @@ namespace ProtoType
             this.DMlabel = new System.Windows.Forms.Label();
             this.MGlabel = new System.Windows.Forms.Label();
             this.jdmlabel = new System.Windows.Forms.Label();
+            this.CameronGrunert = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ESlabel
@@ -80,11 +81,22 @@ namespace ProtoType
             this.jdmlabel.TabIndex = 3;
             this.jdmlabel.Text = "John d Matzke";
             // 
+            // CameronGrunert
+            // 
+            this.CameronGrunert.AutoSize = true;
+            this.CameronGrunert.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CameronGrunert.Location = new System.Drawing.Point(12, 150);
+            this.CameronGrunert.Name = "CameronGrunert";
+            this.CameronGrunert.Size = new System.Drawing.Size(318, 46);
+            this.CameronGrunert.TabIndex = 4;
+            this.CameronGrunert.Text = "CameronGrunert";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.CameronGrunert);
             this.Controls.Add(this.jdmlabel);
             this.Controls.Add(this.MGlabel);
             this.Controls.Add(this.DMlabel);
@@ -99,15 +111,13 @@ namespace ProtoType
 
         #endregion
 
-<<<<<<< Updated upstream
         private System.Windows.Forms.Label ESlabel;
         private System.Windows.Forms.Label MElabel;
         private System.Windows.Forms.Label DMlabel;
         private System.Windows.Forms.Label MGlabel;
         private System.Windows.Forms.Label jdmlabel;
-=======
-        private System.Windows.Forms.Label JDMlabel;
->>>>>>> Stashed changes
+        private System.Windows.Forms.Label CameronGrunert;
+
     }
 }
 

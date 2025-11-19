@@ -36,6 +36,7 @@ namespace ProtoType
             this.CameronGrunert = new System.Windows.Forms.Label();
             this.LucaLabel = new System.Windows.Forms.Label();
             this.chaselabel = new System.Windows.Forms.Label();
+            this.Daniellabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ESlabel
@@ -113,11 +114,21 @@ namespace ProtoType
             this.chaselabel.TabIndex = 6;
             this.chaselabel.Text = "Chase Lowry";
             // 
+            // Daniellabel
+            // 
+            this.Daniellabel.AutoSize = true;
+            this.Daniellabel.Location = new System.Drawing.Point(12, 140);
+            this.Daniellabel.Name = "Daniellabel";
+            this.Daniellabel.Size = new System.Drawing.Size(92, 16);
+            this.Daniellabel.TabIndex = 7;
+            this.Daniellabel.Text = "DanielJanuski";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.Daniellabel);
             this.Controls.Add(this.chaselabel);
             this.Controls.Add(this.LucaLabel);
             this.Controls.Add(this.CameronGrunert);
@@ -143,6 +154,7 @@ namespace ProtoType
         private System.Windows.Forms.Label CameronGrunert;
         private System.Windows.Forms.Label LucaLabel;
         private System.Windows.Forms.Label chaselabel;
+        private System.Windows.Forms.Label Daniellabel;
     }
 }
 

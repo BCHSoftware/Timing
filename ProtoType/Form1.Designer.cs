@@ -34,6 +34,7 @@ namespace ProtoType
             this.MGlabel = new System.Windows.Forms.Label();
             this.jdmlabel = new System.Windows.Forms.Label();
             this.CameronGrunert = new System.Windows.Forms.Label();
+            this.LucaLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ESlabel
@@ -84,18 +85,29 @@ namespace ProtoType
             // CameronGrunert
             // 
             this.CameronGrunert.AutoSize = true;
-            this.CameronGrunert.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CameronGrunert.Location = new System.Drawing.Point(12, 150);
+            this.CameronGrunert.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CameronGrunert.Location = new System.Drawing.Point(7, 67);
             this.CameronGrunert.Name = "CameronGrunert";
-            this.CameronGrunert.Size = new System.Drawing.Size(318, 46);
+            this.CameronGrunert.Size = new System.Drawing.Size(332, 46);
             this.CameronGrunert.TabIndex = 4;
             this.CameronGrunert.Text = "CameronGrunert";
+            // 
+            // LucaLabel
+            // 
+            this.LucaLabel.AutoSize = true;
+            this.LucaLabel.Font = new System.Drawing.Font("Segoe Script", 7.8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LucaLabel.Location = new System.Drawing.Point(402, 90);
+            this.LucaLabel.Name = "LucaLabel";
+            this.LucaLabel.Size = new System.Drawing.Size(116, 20);
+            this.LucaLabel.TabIndex = 5;
+            this.LucaLabel.Text = "Luca Frusciano";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.LucaLabel);
             this.Controls.Add(this.CameronGrunert);
             this.Controls.Add(this.jdmlabel);
             this.Controls.Add(this.MGlabel);
@@ -117,7 +129,7 @@ namespace ProtoType
         private System.Windows.Forms.Label MGlabel;
         private System.Windows.Forms.Label jdmlabel;
         private System.Windows.Forms.Label CameronGrunert;
-
+        private System.Windows.Forms.Label LucaLabel;
     }
 }
 

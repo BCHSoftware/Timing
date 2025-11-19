@@ -35,6 +35,7 @@ namespace ProtoType
             this.jdmlabel = new System.Windows.Forms.Label();
             this.CameronGrunert = new System.Windows.Forms.Label();
             this.LucaLabel = new System.Windows.Forms.Label();
+            this.chaselabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // ESlabel
@@ -102,11 +103,22 @@ namespace ProtoType
             this.LucaLabel.TabIndex = 5;
             this.LucaLabel.Text = "Luca Frusciano";
             // 
+            // chaselabel
+            // 
+            this.chaselabel.AutoSize = true;
+            this.chaselabel.Font = new System.Drawing.Font("MV Boli", 7.8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chaselabel.Location = new System.Drawing.Point(615, 90);
+            this.chaselabel.Name = "chaselabel";
+            this.chaselabel.Size = new System.Drawing.Size(95, 17);
+            this.chaselabel.TabIndex = 6;
+            this.chaselabel.Text = "Chase Lowry";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.chaselabel);
             this.Controls.Add(this.LucaLabel);
             this.Controls.Add(this.CameronGrunert);
             this.Controls.Add(this.jdmlabel);
@@ -130,6 +142,7 @@ namespace ProtoType
         private System.Windows.Forms.Label jdmlabel;
         private System.Windows.Forms.Label CameronGrunert;
         private System.Windows.Forms.Label LucaLabel;
+        private System.Windows.Forms.Label chaselabel;
     }
 }
 

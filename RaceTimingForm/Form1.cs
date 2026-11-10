@@ -19,6 +19,8 @@ namespace RaceTimingForm
         private static readonly object lockObject = new object();
         private static Dictionary<string, Tag> _firstSeenEpcs = new Dictionary<string, Tag>();
 
+        private readonly HashSet<object[]> _itemsToAdd = [];
+
         public Form1()
         {
             InitializeComponent();
@@ -51,6 +53,7 @@ namespace RaceTimingForm
                 _offsetTime = TimeSpan.Zero;
             }
 
+            _itemsToAdd.Clear(); // Clear any previous items to add
             stopwatch.Start(); // Start the Stopwatch
             updateTimer.Start(); // Start the UI update timer
             // Optionally disable/enable buttons for better user experience
@@ -93,6 +96,18 @@ namespace RaceTimingForm
         {
             stopButton.Enabled = false;
             resetButton.Enabled = false;
+            _firstSeenEpcs.Clear();
+            _itemsToAdd.Clear();
+            rawListBox.Items.Clear();
+            //resultsdataGrid.Rows.Clear();
+
+            if (reader != null)
+            {
+                reader.TagsReported -= OnTagsReported;
+                reader.TagOpComplete -= OnTagOpComplete;
+            }
+
+            FileConsole.WriteLine("Application is starting");
         }
 
         private void updateTimer_Tick(object sender, EventArgs e)
@@ -108,6 +123,12 @@ namespace RaceTimingForm
                                             ts.Minutes,
                                             ts.Seconds,
                                             ts.Milliseconds);
+
+            foreach (var itemToAdd in _itemsToAdd)
+            {
+                resultsdataGrid.Rows.Add(itemToAdd);
+            }
+            _itemsToAdd.Clear();
         }
         private void Disconnect()
         {
@@ -117,6 +138,9 @@ namespace RaceTimingForm
             {
                 if (reader != null && reader.IsConnected && reader.QueryStatus().IsSingulating)
                 {
+                    reader.TagsReported -= OnTagsReported;
+                    reader.TagOpComplete -= OnTagOpComplete;
+
                     reader.Stop();
                     // Disconnect from the reader.
                     reader.Disconnect();
@@ -132,6 +156,7 @@ namespace RaceTimingForm
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             Disconnect();
+            _firstSeenEpcs.Clear();
 
             FileConsole.WriteLine("Application is closing. Shutting down FileFileConsole.");
             SaveResults();
@@ -212,7 +237,6 @@ namespace RaceTimingForm
                     string hostname = "SpeedwayR-16-50-19";
                     reader.Connect(hostname);
                 }
-
                 updateSettings();
 
                 startButton.Enabled = true;
@@ -420,15 +444,39 @@ namespace RaceTimingForm
                 {
                     // Try to add the EPC to our set.
                     // if this is the first time we've encountered it.
-                    string t = tag.Epc.ToString();
-                    t = t.Substring(t.Length - (t.Length > 3 ? 3 : 0));
 
-                    if (!_firstSeenEpcs.ContainsKey(tag.Epc.ToString()))
+                    string t = tag.Epc.ToString();
+                    FileConsole.WriteLine("Found tag: " + t);
+
+                    if (!t.SkipLast(3).All(c => c == '0' || c == ' '))
                     {
+                        FileConsole.WriteLine("Bad tag");
+                        continue;
+                    }
+
+                    t = t[^(t.Length > 3 ? 3 : 0)..];
+
+                    /*bool contains = false;
+                    for (int i = 0; i < resultsdataGrid.Rows.Count; i++)
+                    {
+                        var item = resultsdataGrid.Rows[i];
+                        if (item.Cells[1].Value.ToString() == t)
+                        {
+                            contains = true;
+                            continue;
+                        }
+                    }
+
+                    if (!contains)*/
+                    if (updateTimer.Enabled && !_firstSeenEpcs.ContainsKey(tag.Epc.ToString()))
+                    {
+                        FileConsole.WriteLine("Never seen tag");
                         _firstSeenEpcs[tag.Epc.ToString()] = tag;
 
                         var item = new TagListBoxItem { DisplayText = timeInputTextBox.Text + "/t" + t, Tag = tag.Epc.ToString() };
-                        resultsdataGrid.Rows.Add(timeInputTextBox.Text, t);
+
+                        _itemsToAdd.Add([timeInputTextBox.Text, t]);
+
                         if (radioButton2.Checked)
                         {
                             this.Invoke((MethodInvoker)(() => dataGridView.Rows.Insert(0, tag.Epc.ToString())));
@@ -437,12 +485,13 @@ namespace RaceTimingForm
                             this.Invoke((MethodInvoker)(() => dataGridView.CurrentCell = dataGridView.Rows[0].Cells[1]));
                         }
 
-   ; if (checkBeep.Checked)
+                        if (checkBeep.Checked)
                             Beep();
                     }
                     try
                     {
-                        this.Invoke((MethodInvoker)(() => rawListBox.Items.Insert(0, t)));
+                        if (!rawListBox.Items.Contains(t))
+                            Invoke((MethodInvoker)(() => rawListBox.Items.Insert(0, t)));
                     }
                     catch (Exception)
                     {
@@ -581,7 +630,7 @@ namespace RaceTimingForm
                 // Send a tag report depending on usage.
                 if (radioButton1.Checked) // for races
                 {
-                    settings.SearchMode = SearchMode.SingleTarget;
+                    settings.SearchMode = SearchMode.DualTargetBtoASelect;
                     settings.Report.Mode = ReportMode.Individual;
                 }
                 else
@@ -592,8 +641,6 @@ namespace RaceTimingForm
                 }
                 // Apply the newly modified settings.
                 reader.ApplySettings(settings);
-
-
 
                 // Don't call the Start method if the
                 // reader is already running.
